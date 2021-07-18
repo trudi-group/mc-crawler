@@ -1,0 +1,23 @@
+[package]
+version = "0.1.0"
+name = "mobcoin-crawler-web"
+repository = "https://github.com/seed-rs/seed-quickstart"
+authors = ["Charmaine Ndolo <Charmaine.Ndolo@hu-berlin.de>"]
+description = "App Description"
+categories = ["category"]
+license = "MIT"
+readme = "./README.md"
+edition = "2018"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3.18"
+
+[dependencies]
+seed = "0.8.0"
+mobcoin-crawler-console = {path = "../console-app"}
+
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = ['-Os']

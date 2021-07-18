@@ -1,0 +1,16 @@
+[package]
+version = "0.1.0"
+name = "mobcoin-crawler-console"
+repository = "https://gitlab.informatik.hu-berlin.de/ti/theses/student-content/ndolo-charmaine-sp/mobilecoin-crawler"
+authors = ["Charmaine Ndolo <Charmaine.Ndolo@hu-berlin.de>"]
+description = "App Description"
+categories = ["category"]
+license = "MIT"
+readme = "./README.md"
+
+edition = "2018"
+
+[dev-dependencies]
+
+[dependencies]
+mc-consensus-scp = {git = "https://github.com/mobilecoinfoundation/mobilecoin"}

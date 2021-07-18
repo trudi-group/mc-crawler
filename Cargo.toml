@@ -1,0 +1,30 @@
+[workspace]
+members = [
+    "console-app", "web-app",
+]
+
+[profile.release]
+lto = true
+opt-level = 'z'
+codegen-units = 1
+
+[patch.crates-io]
+# ed25519-dalek depends on rand 0.7 which in turns depends on a broken version of packed_simd
+# This is a PR that moves it to newer rand
+# See https://github.com/dalek-cryptography/ed25519-dalek/pull/160
+ed25519-dalek = { git = "https://github.com/eranrund/ed25519-dalek.git", rev = "484369672f45d776fe13fdd17618aed2f4047909" }
+
+# Bump curve25519-dalek version to 4.0.0-pre0
+x25519-dalek = { git = "https://github.com/eranrund/x25519-dalek.git", rev = "57c04e5c5aca3551c015167d8176393fbe76dc65" }
+
+# Overridden since we need a commit that uprevs a bunch of dependencies.
+schnorrkel = { git = "https://github.com/mobilecoinofficial/schnorrkel", rev = "fa27d0ed32d251a27399a23d3ef69611acb14d56" }
+
+#d25519-dalek = { git = "https://github.com/eranrund/ed25519-dalek.git", rev = "484369672f45d776fe13fdd17618aed2f4047909" }
+
+# prost is patched with no_std support (https://github.com/danburkert/prost/pull/319)
+# current revision is from jun 13 2020, waiting for a new prost release
+# https://github.com/danburkert/prost/issues/329
+prost = { git = "https://github.com/danburkert/prost", rev = "6113789f70b69709820becba4242824b4fb3ffec" }
+prost-derive = { git = "https://github.com/danburkert/prost", rev = "6113789f70b69709820becba4242824b4fb3ffec" }
+

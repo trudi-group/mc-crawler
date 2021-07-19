@@ -1,4 +1,0 @@
-# Only because of YCM interfering with the arfifacts
-[build]
-target-dir = "builds/debug"
-cache-dir = "builds/relase"

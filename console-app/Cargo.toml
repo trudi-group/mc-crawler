@@ -10,7 +10,18 @@ readme = "./README.md"
 
 edition = "2018"
 
-[dev-dependencies]
 
 [dependencies]
 mc-consensus-scp = {git = "https://github.com/mobilecoinfoundation/mobilecoin"}
+log = "^0.4"
+env_logger = "0.9.0"
+futures = "0.3"
+mc-util-uri = {git = "https://github.com/mobilecoinfoundation/mobilecoin"}
+mc-util-grpc = {git = "https://github.com/mobilecoinfoundation/mobilecoin"}
+mc-common = {git = "https://github.com/mobilecoinfoundation/mobilecoin"}
+mc-consensus-api = {git = "https://github.com/mobilecoinfoundation/mobilecoin"}
+mc-peers = {git = "https://github.com/mobilecoinfoundation/mobilecoin"}
+mc-util-serial = {git = "https://github.com/mobilecoinfoundation/mobilecoin"}
+grpcio = "0.9"
+mbedtls = { git = "https://github.com/mobilecoinofficial/rust-mbedtls.git", rev = "c7fa3f0c737f36af8f437e147131d1f5c8a90b0e" }
+mbedtls-sys-auto = { git = "https://github.com/mobilecoinofficial/rust-mbedtls.git", rev = "c7fa3f0c737f36af8f437e147131d1f5c8a90b0e" }

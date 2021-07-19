@@ -6,19 +6,19 @@ use mc_consensus_scp::QuorumSet;
 
 #[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]
 pub struct MobcoinNode {
-    hostname: String,
-    ip_address: String,
-    port: u16,
-    public_key: String,
-    quorum_set: QuorumSet,
-    online: bool,
+    pub hostname: String,
+    pub ip_address: String,
+    pub port: u16,
+    pub public_key: String,
+    pub quorum_set: QuorumSet,
+    pub online: bool,
 }
 
 #[derive(Clone, Eq, PartialEq, Debug, Default)]
 pub struct Crawler {
-    discovered_nodes: HashSet<MobcoinNode>,
-    to_crawl: HashSet<MobcoinNode>,
-    crawl_duration: Duration,
+    pub discovered_nodes: HashSet<MobcoinNode>,
+    pub to_crawl: HashSet<String>,
+    pub crawl_duration: Duration,
 }
 
 impl MobcoinNode {
@@ -52,6 +52,18 @@ impl MobcoinNode {
     }
 }
 
+impl Crawler {
+    pub fn new(bootstrap_peer: &str) -> Self {
+        let mut to_crawl: HashSet<String> = HashSet::new();
+        to_crawl.insert(String::from(bootstrap_peer));
+        Crawler {
+            discovered_nodes: HashSet::new(),
+            to_crawl,
+            crawl_duration: Duration::default(),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -61,6 +73,20 @@ mod tests {
         let hostname = "foo:443";
         let expected = (String::from("127.0.0.1"), 0);
         let actual = MobcoinNode::resolve_hostname(String::from(hostname));
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn create_new_crawler() {
+        let bs_peer = "foo";
+        let mut to_crawl: HashSet<String> = HashSet::new();
+        to_crawl.insert(String::from("foo"));
+        let expected = Crawler {
+            discovered_nodes: HashSet::new(),
+            to_crawl,
+            crawl_duration: Duration::default(),
+        };
+        let actual = Crawler::new(bs_peer);
         assert_eq!(expected, actual);
     }
 }

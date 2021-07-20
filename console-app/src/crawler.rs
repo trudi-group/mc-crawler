@@ -72,3 +72,21 @@ impl Crawler {
         response
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn invalid_peer_address_to_cons_peer() {
+        let peer = "localhost:443";
+        let actual = Crawler::prepare_rpc(String::from(peer));
+        assert!(actual.is_none());
+    }
+    #[test]
+    fn correct_peer_address_to_cons_peer() {
+        let peer = "mc://localhost:443";
+        let actual = Crawler::prepare_rpc(String::from(peer));
+        assert!(actual.is_some());
+    }
+}

@@ -16,6 +16,7 @@ mc-consensus-scp = {git = "https://github.com/mobilecoinfoundation/mobilecoin"}
 log = "^0.4"
 env_logger = "0.9.0"
 futures = "0.3"
+url = "2.2.2"
 mc-util-uri = {git = "https://github.com/mobilecoinfoundation/mobilecoin"}
 mc-util-grpc = {git = "https://github.com/mobilecoinfoundation/mobilecoin"}
 mc-common = {git = "https://github.com/mobilecoinfoundation/mobilecoin"}

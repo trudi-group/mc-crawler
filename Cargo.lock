@@ -2259,6 +2259,7 @@ dependencies = [
  "mc-util-grpc",
  "mc-util-serial",
  "mc-util-uri",
+ "url",
 ]
 
 [[package]]

@@ -3,9 +3,9 @@ members = [
     "console-app", "web-app",
 ]
 
-#[profile.release]
+[profile.release]
 #lto = true
-#codegen-units = 1
+codegen-units = 1
 
 [patch.crates-io]
 # grpcio patched with metadata

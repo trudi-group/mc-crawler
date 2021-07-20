@@ -11,7 +11,8 @@
    - cargo install wasm-bindgen-cli
 
 ## 2. Running the Console App 
-    1. cargo run --release -p mobcoin-crawler-console
+    1. `cd console-app`
+    2. `SGX_MODE=SW IAS_MODE=DEV cargo run mobcoin-crawler-console`
 
 ## 3. Running the Web App
     1. `cd web-app/`

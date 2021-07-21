@@ -1,12 +1,8 @@
 use crate::core_types::*;
 
-use log::{debug, info, warn};
+use log::{info, warn};
 use std::time::Instant;
-use std::{
-    str::FromStr,
-    sync::{Arc, Mutex},
-    thread,
-};
+use std::{str::FromStr, sync::Arc};
 
 use grpcio::{ChannelBuilder, EnvBuilder};
 use mc_common::logger;
@@ -20,62 +16,61 @@ use mc_util_serial::deserialize;
 use mc_util_uri::ConsensusClientUri as ClientUri;
 
 impl Crawler {
-    pub fn crawl_network(self) {
+    pub fn crawl_network(&mut self) {
         let start = Instant::now();
-        let crawler = Arc::new(Mutex::new(self));
-        let mut handles = vec![];
         info!("Starting crawl..");
         loop {
-            let set_lock = crawler.lock().expect("Mutex poisoned");
-            let mut to_crawl_set = set_lock.to_crawl.write().expect("RWLock poisoned");
-            for peer in to_crawl_set.drain() {
-                info!("Crawling peer: {}", peer.clone());
-                let clone = Arc::clone(&crawler);
-                let mut reachable = false;
-                let handle = thread::spawn(move || {
-                    // We didn't even send the RPC so no need to take note of the node
-                    let rpc_client = match Self::prepare_rpc(peer.clone()) {
-                        None => {
-                            warn!("Terminating crawl on peer {} .", peer.clone());
-                            return;
-                        }
-                        Some(client) => client,
-                    };
-                    // RPC failure, e.g. no response
-                    // TODO: handle_discovered_node
-                    let rpc_response = match Self::send_rpc(rpc_client) {
-                        None => {
-                            warn!("Terminating crawl on peer {} .", peer.clone());
-                            return;
-                        }
-                        Some(reply) => {
-                            reachable = true;
-                            reply
-                        }
-                    };
-                    let quorum_set = match Self::deserialise_payload_to_quorum_set(rpc_response) {
-                        None => {
-                            warn!("Couldn't deserialise message from {}.", peer.clone());
-                            QuorumSet::empty()
-                        }
-                        Some(qs) => qs,
-                    };
-                    let discovered = MobcoinNode::new(peer.clone(), reachable, quorum_set);
-                    Self::handle_discovered_node(clone, peer.to_string(), discovered);
-                });
-                handles.push(handle);
+            for peer in self.to_crawl.clone().iter() {
+                self.crawl_node(peer.to_string());
             }
-            let clone2 = Arc::clone(&crawler);
-            if Self::should_quit(clone2) {
+            if self.to_crawl.is_empty() {
                 break;
             }
         }
-        for threads in handles {
-            threads.join().unwrap();
-        }
-        let crawl_duration = start.elapsed();
-        crawler.lock().unwrap().crawl_duration = crawl_duration;
-        debug!("Crawler {:?}", crawler.lock().unwrap());
+        self.crawl_duration = start.elapsed();
+        info!(
+            "Crawl Summary - Crawled nodes: {}, Crawl Duration {:?}",
+            self.crawled.len(),
+            self.crawl_duration
+        );
+    }
+
+    /// Sends the given peer a gRPC and serialises its response into a QuorumSet.
+    fn crawl_node(&mut self, peer: String) {
+        info!("Crawling peer: {}", peer.clone());
+        let mut reachable = false;
+        let quorum_set = QuorumSet::empty();
+        // We didn't even send the RPC so no need to take note of the node
+        let rpc_client = match Self::prepare_rpc(peer.clone()) {
+            None => {
+                warn!("Terminating crawl on peer {} .", peer.clone());
+                return;
+            }
+            Some(client) => client,
+        };
+        // RPC failure, e.g. no response
+        // TODO: handle_discovered_node
+        let rpc_response = match Self::send_rpc(rpc_client) {
+            None => {
+                warn!("Error in RPC response from {} .", peer.clone());
+                let discovered = MobcoinNode::new(peer.clone(), reachable, quorum_set);
+                self.handle_discovered_node(peer.to_string(), discovered);
+                return;
+            }
+            Some(reply) => {
+                reachable = true;
+                reply
+            }
+        };
+        let quorum_set = match Self::deserialise_payload_to_quorum_set(rpc_response) {
+            None => {
+                warn!("Couldn't deserialise message from {}.", peer.clone());
+                QuorumSet::empty()
+            }
+            Some(qs) => qs,
+        };
+        let discovered = MobcoinNode::new(peer.clone(), reachable, quorum_set);
+        self.handle_discovered_node(peer.to_string(), discovered);
     }
 
     fn prepare_rpc(peer: String) -> Option<ConsensusPeerApiClient> {
@@ -121,12 +116,6 @@ impl Crawler {
             None
         };
         quorum_set
-    }
-
-    fn should_quit(clone: Arc<Mutex<Crawler>>) -> bool {
-        let crawler = clone.lock().expect("Mutex poisoned");
-        let is_empty = crawler.to_crawl.read().unwrap().is_empty();
-        is_empty
     }
 }
 

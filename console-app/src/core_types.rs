@@ -1,6 +1,5 @@
 use std::collections::HashSet;
 use std::net::{IpAddr, Ipv4Addr};
-use std::sync::{Arc, Mutex, RwLock};
 use std::time::Duration;
 use url::Url;
 
@@ -15,10 +14,10 @@ pub struct MobcoinNode {
     pub online: bool,
 }
 
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, PartialEq, Eq, Default)]
 pub struct Crawler {
     pub mobcoin_nodes: HashSet<MobcoinNode>,
-    pub to_crawl: Arc<RwLock<HashSet<String>>>,
+    pub to_crawl: HashSet<String>,
     pub crawled: HashSet<String>,
     pub crawl_duration: Duration,
 }
@@ -59,7 +58,7 @@ impl Crawler {
         to_crawl.insert(String::from(bootstrap_peer));
         Crawler {
             mobcoin_nodes: HashSet::new(),
-            to_crawl: Arc::new(RwLock::new(to_crawl)),
+            to_crawl,
             crawled: HashSet::new(),
             crawl_duration: Duration::default(),
         }
@@ -68,23 +67,17 @@ impl Crawler {
     /// 0. Add he reporting node to the set of crawled nodes
     /// 1. Add node to the set to discovered nodes
     /// 2. Iterate over all members of the Qset and them to the set of peers that should be crawled
-    pub fn handle_discovered_node(
-        clone: Arc<Mutex<Crawler>>,
-        crawled_node: String,
-        node: MobcoinNode,
-    ) {
-        let mut crawler = clone.lock().expect("Mutex poisoned");
-        crawler.crawled.insert(crawled_node.clone());
-        crawler.mobcoin_nodes.insert(node.clone());
-        let mut to_crawl_set = crawler.to_crawl.write().unwrap();
+    pub fn handle_discovered_node(&mut self, crawled_node: String, node: MobcoinNode) {
+        self.to_crawl.remove(&crawled_node);
+        self.crawled.insert(crawled_node.clone());
+        self.mobcoin_nodes.insert(node.clone());
         for member in node.quorum_set.nodes() {
             let address = format!("{}{}", "mc://", member.responder_id.to_string());
-            if crawler.crawled.get(&address).is_some() {
-                debug!("Already crawled. {}", &member.responder_id.to_string());
+            if self.crawled.get(&address).is_some() {
                 continue;
             } else {
                 debug!("Adding {} to crawl queue.", address);
-                to_crawl_set.insert(address);
+                self.to_crawl.insert(address);
             }
         }
     }
@@ -102,18 +95,18 @@ mod tests {
         assert_eq!(expected, actual);
     }
 
-    /*#[test]
+    #[test]
     fn create_new_crawler() {
         let bs_peer = "foo";
         let mut to_crawl: HashSet<String> = HashSet::new();
         to_crawl.insert(String::from("foo"));
         let expected = Crawler {
             mobcoin_nodes: HashSet::new(),
-            to_crawl: Arc::new(RwLock::new(to_crawl)),
+            to_crawl: to_crawl,
             crawled: HashSet::new(),
             crawl_duration: Duration::default(),
         };
         let actual = Crawler::new(bs_peer);
         assert_eq!(expected, actual);
-    }*/
+    }
 }

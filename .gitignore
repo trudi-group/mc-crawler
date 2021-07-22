@@ -1,6 +1,7 @@
 /target
 /pkg
 */dist
+*/output
 **/*.rs.bk
 **/*.swp
 

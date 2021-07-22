@@ -3,30 +3,31 @@ use std::net::{IpAddr, Ipv4Addr};
 use std::time::Duration;
 use url::Url;
 
-use mc_consensus_scp::QuorumSet;
+use mc_consensus_scp::QuorumSet as McQuorumSet;
 
 #[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]
-pub struct MobcoinNode {
-    pub hostname: String,
+pub struct CrawledNode {
+    pub url: String,
     pub domain: String,
     pub port: u16,
-    pub quorum_set: QuorumSet,
+    pub quorum_set: McQuorumSet,
     pub online: bool,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Default)]
 pub struct Crawler {
-    pub mobcoin_nodes: HashSet<MobcoinNode>,
+    pub mobcoin_nodes: HashSet<CrawledNode>,
     pub to_crawl: HashSet<String>,
     pub crawled: HashSet<String>,
     pub crawl_duration: Duration,
+    pub crawl_time: String,
 }
 
-impl MobcoinNode {
-    pub fn new(hostname: String, online: bool, quorum_set: QuorumSet) -> Self {
-        let (domain, port) = Self::resolve_hostname(hostname.clone());
-        MobcoinNode {
-            hostname,
+impl CrawledNode {
+    pub fn new(url: String, online: bool, quorum_set: McQuorumSet) -> Self {
+        let (domain, port) = Self::resolve_url(url.clone());
+        CrawledNode {
+            url,
             domain,
             port,
             quorum_set,
@@ -34,8 +35,8 @@ impl MobcoinNode {
         }
     }
 
-    fn resolve_hostname(hostname: String) -> (String, u16) {
-        let url = Url::parse(&hostname).expect("Failed to parse into Url");
+    fn resolve_url(url: String) -> (String, u16) {
+        let url = Url::parse(&url).expect("Failed to parse into Url");
         let domain = url.domain();
         let port = url.port();
 
@@ -61,13 +62,14 @@ impl Crawler {
             to_crawl,
             crawled: HashSet::new(),
             crawl_duration: Duration::default(),
+            crawl_time: String::default(),
         }
     }
 
     /// 0. Add he reporting node to the set of crawled nodes
     /// 1. Add node to the set to discovered nodes
     /// 2. Iterate over all members of the Qset and them to the set of peers that should be crawled
-    pub fn handle_discovered_node(&mut self, crawled_node: String, node: MobcoinNode) {
+    pub fn handle_discovered_node(&mut self, crawled_node: String, node: CrawledNode) {
         self.to_crawl.remove(&crawled_node);
         self.crawled.insert(crawled_node.clone());
         self.mobcoin_nodes.insert(node.clone());
@@ -88,10 +90,10 @@ mod tests {
     use super::*;
 
     #[test]
-    fn bad_hostname_to_ip_port() {
-        let hostname = "foo:443";
+    fn bad_url_to_ip_port() {
+        let url = "foo:443";
         let expected = (String::from("127.0.0.1"), 0);
-        let actual = MobcoinNode::resolve_hostname(String::from(hostname));
+        let actual = CrawledNode::resolve_url(String::from(url));
         assert_eq!(expected, actual);
     }
 

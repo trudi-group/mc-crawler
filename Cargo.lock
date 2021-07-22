@@ -2246,8 +2246,8 @@ dependencies = [
 name = "mobcoin-crawler-console"
 version = "0.1.0"
 dependencies = [
+ "chrono",
  "env_logger 0.9.0",
- "futures",
  "grpcio",
  "log",
  "mbedtls",
@@ -2259,6 +2259,8 @@ dependencies = [
  "mc-util-grpc",
  "mc-util-serial",
  "mc-util-uri",
+ "serde",
+ "serde_json",
  "url",
 ]
 

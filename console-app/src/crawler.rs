@@ -1,5 +1,7 @@
 use crate::core_types::*;
+use crate::io::CrawlReport;
 
+use chrono::{DateTime, Utc};
 use log::{info, warn};
 use std::time::Instant;
 use std::{str::FromStr, sync::Arc};
@@ -16,8 +18,9 @@ use mc_util_serial::deserialize;
 use mc_util_uri::ConsensusClientUri as ClientUri;
 
 impl Crawler {
-    pub fn crawl_network(&mut self) {
+    pub fn crawl_network(&mut self) -> CrawlReport {
         let start = Instant::now();
+        let now: DateTime<Utc> = Utc::now();
         info!("Starting crawl..");
         loop {
             for peer in self.to_crawl.clone().iter() {
@@ -28,11 +31,13 @@ impl Crawler {
             }
         }
         self.crawl_duration = start.elapsed();
+        self.crawl_time = now.to_rfc3339();
         info!(
             "Crawl Summary - Crawled nodes: {}, Crawl Duration {:?}",
             self.crawled.len(),
             self.crawl_duration
         );
+        CrawlReport::create_crawl_report(self)
     }
 
     /// Sends the given peer a gRPC and serialises its response into a QuorumSet.
@@ -53,7 +58,7 @@ impl Crawler {
         let rpc_response = match Self::send_rpc(rpc_client) {
             None => {
                 warn!("Error in RPC response from {} .", peer.clone());
-                let discovered = MobcoinNode::new(peer.clone(), reachable, quorum_set);
+                let discovered = CrawledNode::new(peer.clone(), reachable, quorum_set);
                 self.handle_discovered_node(peer.to_string(), discovered);
                 return;
             }
@@ -69,7 +74,7 @@ impl Crawler {
             }
             Some(qs) => qs,
         };
-        let discovered = MobcoinNode::new(peer.clone(), reachable, quorum_set);
+        let discovered = CrawledNode::new(peer.clone(), reachable, quorum_set);
         self.handle_discovered_node(peer.to_string(), discovered);
     }
 

@@ -1,4 +1,7 @@
 use env_logger::Env;
+use log::info;
+use std::fs;
+use std::fs::File;
 
 use mobcoin_crawler_console::*;
 
@@ -11,8 +14,14 @@ pub fn main() {
     env_logger::init_from_env(env);
 
     let mut crawler = core_types::Crawler::new(BOOTSTRAP_PEER);
-    crawler.crawl_network();
-    for i in crawler.mobcoin_nodes {
-        println!("Crawler {:?}", i.hostname);
-    }
+    let report = crawler.crawl_network();
+    let dir = "output";
+    fs::create_dir_all(dir).expect("Error creating output directory");
+    let path = format!(
+        "{}/{}{}{}",
+        dir, "mobilecoin_nodes_", crawler.crawl_time, ".json"
+    );
+    let file = File::create(path.clone()).expect("Error creating file");
+    info!("Writing report to file {}", path);
+    serde_json::to_writer(file, &report).expect("Error while writing report.");
 }

@@ -40,14 +40,14 @@ dependencies = [
 
 [[package]]
 name = "aes-gcm"
-version = "0.9.2"
+version = "0.9.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bc3be92e19a7ef47457b8e6f90707e12b6ac5d20c6f3866584fa3be0787d839f"
+checksum = "b2a930fd487faaa92a30afa92cc9dd1526a5cff67124abbbb1c617ce070f4dcf"
 dependencies = [
  "aead",
  "aes",
  "cipher",
- "ctr",
+ "ctr 0.8.0",
  "ghash",
  "subtle",
 ]
@@ -370,7 +370,7 @@ dependencies = [
  "num-integer",
  "num-traits",
  "serde",
- "time 0.1.43",
+ "time 0.1.44",
  "winapi 0.3.9",
 ]
 
@@ -428,16 +428,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "console_error_panic_hook"
-version = "0.1.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b8d976903543e0c48546a91908f21588a680a8c8f984df9a5d69feccb2b2a211"
-dependencies = [
- "cfg-if 0.1.10",
- "wasm-bindgen",
-]
-
-[[package]]
 name = "const_fn"
 version = "0.4.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -449,9 +439,8 @@ version = "0.14.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "03a5d7b21829bc7b4bf4754a978a241ae54ea55a40f92bb20216e54096f4b951"
 dependencies = [
- "percent-encoding",
  "time 0.2.27",
- "version_check 0.9.3",
+ "version_check",
 ]
 
 [[package]]
@@ -528,9 +517,9 @@ dependencies = [
 
 [[package]]
 name = "crypto-mac"
-version = "0.10.0"
+version = "0.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4857fd85a0c34b3c3297875b747c1e02e06b6a0ea32dd892d8192b9ce0813ea6"
+checksum = "bff07008ec701e8028e2ceb8f83f0e4274ee62bd2dbdc4fefff2e9a91824081a"
 dependencies = [
  "generic-array",
  "subtle",
@@ -541,6 +530,15 @@ name = "ctr"
 version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a232f92a03f37dd7d7dd2adc67166c77e9cd88de5b019b9a9eecfaeaf7bfd481"
+dependencies = [
+ "cipher",
+]
+
+[[package]]
+name = "ctr"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "049bb91fb4aaf0e3c7efa6cd5ef877dbbbd15b39dad06d9948de4ec8a75761ea"
 dependencies = [
  "cipher",
 ]
@@ -558,15 +556,6 @@ dependencies = [
  "serde",
  "subtle",
  "zeroize",
-]
-
-[[package]]
-name = "dbg"
-version = "1.0.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4677188513e0e9d7adced5997cf9a1e7a3c996c994f90093325c5332c1a8b221"
-dependencies = [
- "version_check 0.1.5",
 ]
 
 [[package]]
@@ -629,7 +618,7 @@ checksum = "3bf95dc3f046b9da4f2d51833c0d3547d8564ef6910f5c1ed130306a75b92886"
 dependencies = [
  "proc-macro2 1.0.27",
  "quote 1.0.9",
- "syn 1.0.73",
+ "syn 1.0.74",
 ]
 
 [[package]]
@@ -640,9 +629,9 @@ checksum = "4bb454f0228b18c7f4c3b0ebbee346ed9c52e7443b0999cd543ff3571205701d"
 
 [[package]]
 name = "ed25519"
-version = "1.1.1"
+version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8d0860415b12243916284c67a9be413e044ee6668247b99ba26d94b2bc06c8f6"
+checksum = "4620d40f6d2601794401d6dd95a5cf69b6c157852539470eeda433a99b3c0efc"
 dependencies = [
  "serde",
  "signature",
@@ -667,12 +656,6 @@ name = "either"
 version = "1.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e78d4f1cc4ae33bbfc157ed5d5a5ef3bc29227303d595861deb238fcec4e9457"
-
-[[package]]
-name = "enclose"
-version = "1.1.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1056f553da426e9c025a662efa48b52e62e0a3a7648aa2d15aeaaf7f0d329357"
 
 [[package]]
 name = "encoding_rs"
@@ -715,7 +698,7 @@ version = "0.12.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2d2f06b9cac1506ece98fe3231e3cc9c4410ec3d5b1f24ae1c8946f0742cdefc"
 dependencies = [
- "version_check 0.9.3",
+ "version_check",
 ]
 
 [[package]]
@@ -736,7 +719,7 @@ checksum = "aa4da3c766cd7a0db8242e326e9e4e081edd567072893ed320008189715366a4"
 dependencies = [
  "proc-macro2 1.0.27",
  "quote 1.0.9",
- "syn 1.0.73",
+ "syn 1.0.74",
  "synstructure",
 ]
 
@@ -857,7 +840,7 @@ dependencies = [
  "proc-macro-hack",
  "proc-macro2 1.0.27",
  "quote 1.0.9",
- "syn 1.0.73",
+ "syn 1.0.74",
 ]
 
 [[package]]
@@ -901,16 +884,7 @@ checksum = "501466ecc8a30d1d3b7fc9229b122b2ce8ed6e9d9223f1138d4babb253e51817"
 dependencies = [
  "serde",
  "typenum",
- "version_check 0.9.3",
-]
-
-[[package]]
-name = "getopts"
-version = "0.2.21"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "14dbbfd5c71d70241ecf9e6f13737f7b5ce823821063188d7e46c41d371eebd5"
-dependencies = [
- "unicode-width",
+ "version_check",
 ]
 
 [[package]]
@@ -920,10 +894,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8fc3cb4d91f53b50155bdcfd23f6a4c39ae1969c2ae85982b135750cccaf5fce"
 dependencies = [
  "cfg-if 1.0.0",
- "js-sys",
  "libc",
  "wasi 0.9.0+wasi-snapshot-preview1",
- "wasm-bindgen",
 ]
 
 [[package]]
@@ -933,17 +905,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7fcd999463524c52659517fe2cea98493cfe485d10565e7b0fb07dbba7ad2753"
 dependencies = [
  "cfg-if 1.0.0",
- "js-sys",
  "libc",
- "wasi 0.10.2+wasi-snapshot-preview1",
- "wasm-bindgen",
+ "wasi 0.10.0+wasi-snapshot-preview1",
 ]
 
 [[package]]
 name = "ghash"
-version = "0.4.2"
+version = "0.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7bbd60caa311237d508927dbba7594b483db3ef05faa55172fcf89b1bcda7853"
+checksum = "b442c439366184de619215247d24e908912b175e824a530253845ac4c251a5c1"
 dependencies = [
  "opaque-debug",
  "polyval",
@@ -960,42 +930,6 @@ name = "glob"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9b919933a397b79c37e33b77bb2aa3dc8eb6e165ad809e58ff75bc7db2e34574"
-
-[[package]]
-name = "gloo-events"
-version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "088514ec8ef284891c762c88a66b639b3a730134714692ee31829765c5bc814f"
-dependencies = [
- "wasm-bindgen",
- "web-sys",
-]
-
-[[package]]
-name = "gloo-file"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8f9fecfe46b5dc3cc46f58e98ba580cc714f2c93860796d002eb3527a465ef49"
-dependencies = [
- "futures-channel",
- "gloo-events",
- "js-sys",
- "wasm-bindgen",
- "web-sys",
-]
-
-[[package]]
-name = "gloo-timers"
-version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "47204a46aaff920a1ea58b11d03dec6f704287d27561724a4631e450654a891f"
-dependencies = [
- "futures-channel",
- "futures-core",
- "js-sys",
- "wasm-bindgen",
- "web-sys",
-]
 
 [[package]]
 name = "grpcio"
@@ -1122,7 +1056,7 @@ version = "0.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c1441c6b1e930e2817404b5046f1f989899143a12bf92de603b69f4e0aee1e15"
 dependencies = [
- "crypto-mac 0.10.0",
+ "crypto-mac 0.10.1",
  "digest",
 ]
 
@@ -1248,7 +1182,7 @@ dependencies = [
  "rand_xoshiro",
  "sized-chunks",
  "typenum",
- "version_check 0.9.3",
+ "version_check",
 ]
 
 [[package]]
@@ -1463,13 +1397,13 @@ dependencies = [
  "libc",
  "libz-sys",
  "quote 1.0.9",
- "syn 1.0.73",
+ "syn 1.0.74",
 ]
 
 [[package]]
 name = "mc-account-keys"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "blake2",
  "curve25519-dalek",
@@ -1490,7 +1424,7 @@ dependencies = [
 [[package]]
 name = "mc-api"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "bs58",
  "cargo-emit",
@@ -1512,7 +1446,7 @@ dependencies = [
 [[package]]
 name = "mc-attest-ake"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "aead",
  "cargo-emit",
@@ -1531,7 +1465,7 @@ dependencies = [
 [[package]]
 name = "mc-attest-api"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "aead",
  "cargo-emit",
@@ -1550,7 +1484,7 @@ dependencies = [
 [[package]]
 name = "mc-attest-core"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "binascii",
  "bitflags",
@@ -1559,7 +1493,6 @@ dependencies = [
  "chrono",
  "digest",
  "displaydoc",
- "failure",
  "hex",
  "hex_fmt",
  "lazy_static",
@@ -1584,7 +1517,7 @@ dependencies = [
 [[package]]
 name = "mc-attest-enclave-api"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "displaydoc",
  "mc-attest-ake",
@@ -1597,13 +1530,13 @@ dependencies = [
 [[package]]
 name = "mc-common"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "backtrace",
  "binascii",
  "cfg-if 0.1.10",
  "chrono",
- "failure",
+ "displaydoc",
  "hashbrown 0.6.3",
  "hex_fmt",
  "hostname 0.1.5",
@@ -1633,7 +1566,7 @@ dependencies = [
 [[package]]
 name = "mc-connection"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "aes-gcm",
  "cookie",
@@ -1659,7 +1592,7 @@ dependencies = [
 [[package]]
 name = "mc-consensus-api"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "cargo-emit",
  "futures",
@@ -1675,9 +1608,9 @@ dependencies = [
 [[package]]
 name = "mc-consensus-enclave-api"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
- "failure",
+ "displaydoc",
  "mc-attest-ake",
  "mc-attest-core",
  "mc-attest-enclave-api",
@@ -1694,7 +1627,7 @@ dependencies = [
 [[package]]
 name = "mc-consensus-scp"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "bigint",
  "maplit",
@@ -1711,14 +1644,34 @@ dependencies = [
 ]
 
 [[package]]
+name = "mc-crawler"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "env_logger 0.9.0",
+ "grpcio",
+ "log",
+ "mc-common",
+ "mc-consensus-api",
+ "mc-consensus-scp",
+ "mc-peers",
+ "mc-util-grpc",
+ "mc-util-serial",
+ "mc-util-uri",
+ "serde",
+ "serde_json",
+ "url",
+]
+
+[[package]]
 name = "mc-crypto-box"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "aead",
  "blake2",
  "digest",
- "failure",
+ "displaydoc",
  "hkdf",
  "mc-crypto-keys",
  "mc-oblivious-aes-gcm",
@@ -1728,7 +1681,7 @@ dependencies = [
 [[package]]
 name = "mc-crypto-digestible"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "cfg-if 0.1.10",
  "curve25519-dalek",
@@ -1742,17 +1695,17 @@ dependencies = [
 [[package]]
 name = "mc-crypto-digestible-derive"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "proc-macro2 1.0.27",
  "quote 1.0.9",
- "syn 1.0.73",
+ "syn 1.0.74",
 ]
 
 [[package]]
 name = "mc-crypto-digestible-signature"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "mc-crypto-digestible",
  "schnorrkel",
@@ -1762,7 +1715,7 @@ dependencies = [
 [[package]]
 name = "mc-crypto-hashes"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "blake2",
  "digest",
@@ -1772,14 +1725,14 @@ dependencies = [
 [[package]]
 name = "mc-crypto-keys"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "binascii",
  "curve25519-dalek",
  "digest",
+ "displaydoc",
  "ed25519",
  "ed25519-dalek",
- "failure",
  "hex_fmt",
  "mc-crypto-digestible",
  "mc-crypto-digestible-signature",
@@ -1798,10 +1751,10 @@ dependencies = [
 [[package]]
 name = "mc-crypto-message-cipher"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "aes-gcm",
- "failure",
+ "displaydoc",
  "generic-array",
  "mc-util-serial",
  "rand_core 0.6.3",
@@ -1812,12 +1765,12 @@ dependencies = [
 [[package]]
 name = "mc-crypto-noise"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "aead",
  "aes-gcm",
  "digest",
- "failure",
+ "displaydoc",
  "generic-array",
  "hkdf",
  "mc-crypto-keys",
@@ -1833,7 +1786,7 @@ dependencies = [
 [[package]]
 name = "mc-crypto-rand"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "cfg-if 0.1.10",
  "getrandom 0.1.16",
@@ -1845,7 +1798,7 @@ dependencies = [
 [[package]]
 name = "mc-fog-sig-authority"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "mc-crypto-keys",
  "signature",
@@ -1854,7 +1807,7 @@ dependencies = [
 [[package]]
 name = "mc-ledger-db"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "curve25519-dalek",
  "displaydoc",
@@ -1882,7 +1835,7 @@ dependencies = [
  "aead",
  "aes",
  "cipher",
- "ctr",
+ "ctr 0.7.0",
  "ghash",
  "subtle",
  "zeroize",
@@ -1891,11 +1844,11 @@ dependencies = [
 [[package]]
 name = "mc-peers"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "crossbeam-channel",
+ "displaydoc",
  "ed25519",
- "failure",
  "grpcio",
  "mc-attest-api",
  "mc-attest-core",
@@ -1921,7 +1874,7 @@ dependencies = [
 [[package]]
 name = "mc-sgx-build"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "cc",
  "lazy_static",
@@ -1932,7 +1885,7 @@ dependencies = [
 [[package]]
 name = "mc-sgx-compat"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "cfg-if 0.1.10",
  "mc-sgx-types",
@@ -1941,7 +1894,7 @@ dependencies = [
 [[package]]
 name = "mc-sgx-css"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "displaydoc",
  "sha2",
@@ -1950,7 +1903,7 @@ dependencies = [
 [[package]]
 name = "mc-sgx-report-cache-api"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "displaydoc",
  "mc-attest-core",
@@ -1962,12 +1915,12 @@ dependencies = [
 [[package]]
 name = "mc-sgx-types"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 
 [[package]]
 name = "mc-transaction-core"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "blake2",
  "bulletproofs",
@@ -1996,7 +1949,7 @@ dependencies = [
 [[package]]
 name = "mc-util-build-grpc"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "mc-util-build-script",
  "protoc-grpcio",
@@ -2005,15 +1958,15 @@ dependencies = [
 [[package]]
 name = "mc-util-build-info"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 
 [[package]]
 name = "mc-util-build-script"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "cargo-emit",
- "failure",
+ "displaydoc",
  "lazy_static",
  "url",
  "walkdir",
@@ -2022,7 +1975,7 @@ dependencies = [
 [[package]]
 name = "mc-util-build-sgx"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "cargo-emit",
  "cc",
@@ -2034,7 +1987,7 @@ dependencies = [
 [[package]]
 name = "mc-util-encodings"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "base64 0.12.3",
  "binascii",
@@ -2047,7 +2000,7 @@ dependencies = [
 [[package]]
 name = "mc-util-from-random"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "rand_core 0.6.3",
 ]
@@ -2055,7 +2008,7 @@ dependencies = [
 [[package]]
 name = "mc-util-grpc"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "base64 0.12.3",
  "cookie",
@@ -2084,12 +2037,12 @@ dependencies = [
 [[package]]
 name = "mc-util-host-cert"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 
 [[package]]
 name = "mc-util-lmdb"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "displaydoc",
  "lmdb-rkv",
@@ -2100,7 +2053,7 @@ dependencies = [
 [[package]]
 name = "mc-util-logger-macros"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "proc-macro2 0.4.30",
  "quote 0.6.13",
@@ -2110,7 +2063,7 @@ dependencies = [
 [[package]]
 name = "mc-util-metrics"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "chrono",
  "grpcio",
@@ -2124,7 +2077,7 @@ dependencies = [
 [[package]]
 name = "mc-util-repr-bytes"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "generic-array",
  "prost",
@@ -2134,7 +2087,7 @@ dependencies = [
 [[package]]
 name = "mc-util-serial"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "prost",
  "serde",
@@ -2144,7 +2097,7 @@ dependencies = [
 [[package]]
 name = "mc-util-uri"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "base64 0.12.3",
  "displaydoc",
@@ -2161,7 +2114,7 @@ dependencies = [
 [[package]]
 name = "mc-watcher-api"
 version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#cd7753a0aed838097b456d230151fb34e8cff034"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
 dependencies = [
  "displaydoc",
  "serde",
@@ -2243,37 +2196,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "mobcoin-crawler-console"
-version = "0.1.0"
-dependencies = [
- "chrono",
- "env_logger 0.9.0",
- "grpcio",
- "log",
- "mbedtls",
- "mbedtls-sys-auto",
- "mc-common",
- "mc-consensus-api",
- "mc-consensus-scp",
- "mc-peers",
- "mc-util-grpc",
- "mc-util-serial",
- "mc-util-uri",
- "serde",
- "serde_json",
- "url",
-]
-
-[[package]]
-name = "mobcoin-crawler-web"
-version = "0.1.0"
-dependencies = [
- "mobcoin-crawler-console",
- "seed",
- "wasm-bindgen-test",
-]
-
-[[package]]
 name = "mockall"
 version = "0.8.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2297,7 +2219,7 @@ dependencies = [
  "cfg-if 0.1.10",
  "proc-macro2 1.0.27",
  "quote 1.0.9",
- "syn 1.0.73",
+ "syn 1.0.74",
 ]
 
 [[package]]
@@ -2318,7 +2240,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ffb4262d26ed83a1c0a33a38fe2bb15797329c85770da05e6b828ddb782627af"
 dependencies = [
  "memchr",
- "version_check 0.9.3",
+ "version_check",
 ]
 
 [[package]]
@@ -2446,22 +2368,22 @@ dependencies = [
 
 [[package]]
 name = "pin-project"
-version = "1.0.7"
+version = "1.0.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c7509cc106041c40a4518d2af7a61530e1eed0e6285296a3d8c5472806ccc4a4"
+checksum = "576bc800220cc65dac09e99e97b08b358cfab6e17078de8dc5fee223bd2d0c08"
 dependencies = [
  "pin-project-internal",
 ]
 
 [[package]]
 name = "pin-project-internal"
-version = "1.0.7"
+version = "1.0.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "48c950132583b500556b1efd71d45b319029f2b71518d979fcc208e16b42426f"
+checksum = "6e8fe8163d14ce7f0cdac2e040116f22eac817edabff0be91e8aff7e9accf389"
 dependencies = [
  "proc-macro2 1.0.27",
  "quote 1.0.9",
- "syn 1.0.73",
+ "syn 1.0.74",
 ]
 
 [[package]]
@@ -2490,9 +2412,9 @@ checksum = "3831453b3449ceb48b6d9c7ad7c96d5ea673e9b470a1dc578c2ce6521230884c"
 
 [[package]]
 name = "polyval"
-version = "0.5.1"
+version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e597450cbf209787f0e6de80bf3795c6b2356a380ee87837b545aded8dbc1823"
+checksum = "a6ba6a405ef63530d6cb12802014b22f9c5751bd17cdcddbe9e46d5c8ae83287"
 dependencies = [
  "cfg-if 1.0.0",
  "cpufeatures",
@@ -2597,7 +2519,7 @@ dependencies = [
  "itertools",
  "proc-macro2 1.0.27",
  "quote 1.0.9",
- "syn 1.0.73",
+ "syn 1.0.74",
 ]
 
 [[package]]
@@ -2645,7 +2567,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ffade02495f22453cd593159ea2f59827aae7f53fa8323f756799b670881dcf8"
 dependencies = [
  "bitflags",
- "getopts",
  "memchr",
  "unicase",
 ]
@@ -2679,7 +2600,6 @@ dependencies = [
  "rand_chacha 0.2.2",
  "rand_core 0.5.1",
  "rand_hc 0.2.0",
- "rand_pcg",
 ]
 
 [[package]]
@@ -2748,15 +2668,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d51e9f596de227fda2ea6c84607f5558e196eeaf43c986b724ba4fb8fdf497e7"
 dependencies = [
  "rand_core 0.6.3",
-]
-
-[[package]]
-name = "rand_pcg"
-version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "16abd0c1b639e9eb4d7c50c0b8100b0d0f849be2349829c740fe8e6eb4816429"
-dependencies = [
- "rand_core 0.5.1",
 ]
 
 [[package]]
@@ -2969,12 +2880,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "scoped-tls"
-version = "1.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ea6a9290e3c9cf0f18145ef7ffa62d68ee0bf5fcd651017e586dc7fd5da448c2"
-
-[[package]]
 name = "scopeguard"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2997,32 +2902,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9eb052cf770a381fa9a6ee63038ff9a0b11d30abb53be970672e950649ff0bfb"
 dependencies = [
  "zeroize",
-]
-
-[[package]]
-name = "seed"
-version = "0.8.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3b599be9cc57456f4b7fc99b8abfb154d4819f7b6c147e80be5580663dad4536"
-dependencies = [
- "console_error_panic_hook",
- "cookie",
- "dbg",
- "enclose",
- "futures",
- "gloo-file",
- "gloo-timers",
- "indexmap",
- "js-sys",
- "pulldown-cmark",
- "rand 0.7.3",
- "serde",
- "serde_json",
- "uuid",
- "version_check 0.9.3",
- "wasm-bindgen",
- "wasm-bindgen-futures",
- "web-sys",
 ]
 
 [[package]]
@@ -3137,7 +3016,7 @@ checksum = "963a7dbc9895aeac7ac90e74f34a5d5261828f79df35cbed41e10189d3804d43"
 dependencies = [
  "proc-macro2 1.0.27",
  "quote 1.0.9",
- "syn 1.0.73",
+ "syn 1.0.74",
 ]
 
 [[package]]
@@ -3405,7 +3284,7 @@ version = "0.2.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e113fb6f3de07a243d434a56ec6f186dfd51cb08448239fe7bcae73f87ff28ff"
 dependencies = [
- "version_check 0.9.3",
+ "version_check",
 ]
 
 [[package]]
@@ -3432,7 +3311,7 @@ dependencies = [
  "quote 1.0.9",
  "serde",
  "serde_derive",
- "syn 1.0.73",
+ "syn 1.0.74",
 ]
 
 [[package]]
@@ -3448,7 +3327,7 @@ dependencies = [
  "serde_derive",
  "serde_json",
  "sha1",
- "syn 1.0.73",
+ "syn 1.0.74",
 ]
 
 [[package]]
@@ -3482,9 +3361,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "1.0.73"
+version = "1.0.74"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f71489ff30030d2ae598524f61326b902466f72a0fb1a8564c001cc63425bcc7"
+checksum = "1873d832550d4588c3dbc20f01361ab00bfe741048f71e3fecf145a7cc18b29c"
 dependencies = [
  "proc-macro2 1.0.27",
  "quote 1.0.9",
@@ -3499,7 +3378,7 @@ checksum = "474aaa926faa1603c40b7885a9eaea29b444d1cb2850cb7c0e37bb1a4182f4fa"
 dependencies = [
  "proc-macro2 1.0.27",
  "quote 1.0.9",
- "syn 1.0.73",
+ "syn 1.0.74",
  "unicode-xid 0.2.2",
 ]
 
@@ -3569,7 +3448,7 @@ checksum = "060d69a0afe7796bf42e9e2ff91f5ee691fb15c53d38b4b62a9a53eb23164745"
 dependencies = [
  "proc-macro2 1.0.27",
  "quote 1.0.9",
- "syn 1.0.73",
+ "syn 1.0.74",
 ]
 
 [[package]]
@@ -3583,11 +3462,12 @@ dependencies = [
 
 [[package]]
 name = "time"
-version = "0.1.43"
+version = "0.1.44"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ca8a50ef2360fbd1eeb0ecd46795a87a19024eb4b53c5dc916ca1fd95fe62438"
+checksum = "6db9e6914ab8b1ae1c260a4ae7a49b6c5611b40328a735b21862567685e73255"
 dependencies = [
  "libc",
+ "wasi 0.10.0+wasi-snapshot-preview1",
  "winapi 0.3.9",
 ]
 
@@ -3602,7 +3482,7 @@ dependencies = [
  "standback",
  "stdweb",
  "time-macros",
- "version_check 0.9.3",
+ "version_check",
  "winapi 0.3.9",
 ]
 
@@ -3626,14 +3506,14 @@ dependencies = [
  "proc-macro2 1.0.27",
  "quote 1.0.9",
  "standback",
- "syn 1.0.73",
+ "syn 1.0.74",
 ]
 
 [[package]]
 name = "tinyvec"
-version = "1.2.0"
+version = "1.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5b5220f05bb7de7f3f53c7c065e1199b3172696fe2db9f9c4d8ad9b4ee74c342"
+checksum = "848a1e1181b9f6753b5e96a092749e29b11d19ede67dfbbd6c7dc7e0f49b5338"
 dependencies = [
  "tinyvec_macros",
 ]
@@ -3764,7 +3644,7 @@ version = "2.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "50f37be617794602aabbeee0be4f259dc1778fabe05e2d67ee8f79326d5cb4f6"
 dependencies = [
- "version_check 0.9.3",
+ "version_check",
 ]
 
 [[package]]
@@ -3805,9 +3685,9 @@ checksum = "8ccb82d61f80a663efe1f787a51b16b5a51e3314d6ac365b08639f52387b33f3"
 
 [[package]]
 name = "universal-hash"
-version = "0.4.0"
+version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8326b2c654932e3e4f9196e69d08fdf7cfd718e1dc6f66b347e6024a0c961402"
+checksum = "9f214e8f697e925001e66ec2c6e37a4ef93f0f78c2eed7814394e10c62025b05"
 dependencies = [
  "generic-array",
  "subtle",
@@ -3856,12 +3736,6 @@ checksum = "f1bddf1187be692e79c5ffeab891132dfb0f236ed36a43c7ed39f1165ee20191"
 
 [[package]]
 name = "version_check"
-version = "0.1.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "914b1a6776c4c929a602fafd8bc742e06365d4bcbe48c30f9cca5824f70dc9dd"
-
-[[package]]
-name = "version_check"
 version = "0.9.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5fecdca9a5291cc2b8dcf7dc02453fee791a280f3743cb0905f8822ae463b3fe"
@@ -3895,9 +3769,9 @@ checksum = "cccddf32554fecc6acb585f82a32a72e28b48f8c4c1883ddfeeeaa96f7d8e519"
 
 [[package]]
 name = "wasi"
-version = "0.10.2+wasi-snapshot-preview1"
+version = "0.10.0+wasi-snapshot-preview1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fd6fbd9a79829dd1ad0cc20627bf1ed606756a7f77edff7b66b7064f9cb327c6"
+checksum = "1a143597ca7c7793eff794def352d41792a93c481eb1042423ff7ff72ba2c31f"
 
 [[package]]
 name = "wasm-bindgen"
@@ -3922,7 +3796,7 @@ dependencies = [
  "log",
  "proc-macro2 1.0.27",
  "quote 1.0.9",
- "syn 1.0.73",
+ "syn 1.0.74",
  "wasm-bindgen-shared",
 ]
 
@@ -3956,7 +3830,7 @@ checksum = "be2241542ff3d9f241f5e2cb6dd09b37efe786df8851c54957683a49f0987a97"
 dependencies = [
  "proc-macro2 1.0.27",
  "quote 1.0.9",
- "syn 1.0.73",
+ "syn 1.0.74",
  "wasm-bindgen-backend",
  "wasm-bindgen-shared",
 ]
@@ -3966,30 +3840,6 @@ name = "wasm-bindgen-shared"
 version = "0.2.74"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d7cff876b8f18eed75a66cf49b65e7f967cb354a7aa16003fb55dbfd25b44b4f"
-
-[[package]]
-name = "wasm-bindgen-test"
-version = "0.3.24"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8cab416a9b970464c2882ed92d55b0c33046b08e0bdc9d59b3b718acd4e1bae8"
-dependencies = [
- "console_error_panic_hook",
- "js-sys",
- "scoped-tls",
- "wasm-bindgen",
- "wasm-bindgen-futures",
- "wasm-bindgen-test-macro",
-]
-
-[[package]]
-name = "wasm-bindgen-test-macro"
-version = "0.3.24"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dd4543fc6cf3541ef0d98bf720104cc6bd856d7eba449fd2aa365ef4fed0e782"
-dependencies = [
- "proc-macro2 1.0.27",
- "quote 1.0.9",
-]
 
 [[package]]
 name = "web-sys"
@@ -4132,9 +3982,9 @@ dependencies = [
 
 [[package]]
 name = "zeroize"
-version = "1.4.0"
+version = "1.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "eeafe61337cb2c879d328b74aa6cd9d794592c82da6be559fdf11493f02a2d18"
+checksum = "377db0846015f7ae377174787dd452e1c5f5a9050bc6f954911d01f116daa0cd"
 dependencies = [
  "zeroize_derive",
 ]
@@ -4147,7 +3997,7 @@ checksum = "a2c1e130bebaeab2f23886bf9acbaca14b092408c452543c857f66399cd6dab1"
 dependencies = [
  "proc-macro2 1.0.27",
  "quote 1.0.9",
- "syn 1.0.73",
+ "syn 1.0.74",
  "synstructure",
 ]
 

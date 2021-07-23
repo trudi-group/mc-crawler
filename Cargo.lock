@@ -1647,6 +1647,7 @@ dependencies = [
 name = "mc-crawler"
 version = "0.1.0"
 dependencies = [
+ "base64 0.13.0",
  "chrono",
  "env_logger 0.9.0",
  "grpcio",
@@ -1654,6 +1655,7 @@ dependencies = [
  "mc-common",
  "mc-consensus-api",
  "mc-consensus-scp",
+ "mc-crypto-keys",
  "mc-peers",
  "mc-util-grpc",
  "mc-util-serial",

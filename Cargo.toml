@@ -17,6 +17,7 @@ url = "2.2.2"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0.59"
 chrono = "0.4.19"
+base64 = "0.13.0"
 mc-consensus-scp = {git = "https://github.com/mobilecoinfoundation/mobilecoin"}
 mc-util-uri = {git = "https://github.com/mobilecoinfoundation/mobilecoin"}
 mc-util-grpc = {git = "https://github.com/mobilecoinfoundation/mobilecoin"}
@@ -24,6 +25,7 @@ mc-common = {git = "https://github.com/mobilecoinfoundation/mobilecoin"}
 mc-consensus-api = {git = "https://github.com/mobilecoinfoundation/mobilecoin"}
 mc-peers = {git = "https://github.com/mobilecoinfoundation/mobilecoin"}
 mc-util-serial = {git = "https://github.com/mobilecoinfoundation/mobilecoin"}
+mc-crypto-keys = {git = "https://github.com/mobilecoinfoundation/mobilecoin"}
 
 [patch.crates-io]
 # grpcio patched with metadata
@@ -64,5 +66,3 @@ serde_cbor = { git = "https://github.com/mobilecoinofficial/cbor", rev = "4c886a
 # Not-yet-released version that depends on newer crates.
 bulletproofs = { git = "https://github.com/eranrund/bulletproofs", rev = "8a7c9cdd1efafa3ad68cd65676302f925de68373" }
 
-# See https://github.com/commure/datatest/pull/30
-datatest = { git = "https://github.com/cormacrelf/datatest.git", rev = "0c12efa" }

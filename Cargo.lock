@@ -4002,8 +4002,3 @@ dependencies = [
  "syn 1.0.74",
  "synstructure",
 ]
-
-[[patch.unused]]
-name = "datatest"
-version = "0.6.4"
-source = "git+https://github.com/cormacrelf/datatest.git?rev=0c12efa#0c12efabd3c0d1769b62d241f51aced05b35df11"

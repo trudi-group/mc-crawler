@@ -1,5 +1,5 @@
-use crate::core_types::*;
-use crate::io::CrawlReport;
+use crate::crawl::core_types::*;
+use crate::io::io::CrawlReport;
 
 use chrono::{DateTime, Utc};
 use log::{info, warn};

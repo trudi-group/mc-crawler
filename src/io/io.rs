@@ -1,4 +1,4 @@
-use crate::core_types::{CrawledNode, Crawler};
+use crate::crawl::{CrawledNode, Crawler};
 
 use mc_consensus_scp::{QuorumSet as McQuorumSet, QuorumSetMember};
 use mc_crypto_keys::Ed25519Public;

@@ -3,7 +3,7 @@ use log::info;
 use std::fs;
 use std::fs::File;
 
-use mc_crawler::*;
+use mc_crawler::{crawl, io};
 
 static BOOTSTRAP_PEER: &str = "mc://peer1.prod.mobilecoinww.com:443";
 
@@ -13,7 +13,7 @@ pub fn main() {
         .write_style_or("MY_LOG_STYLE", "always");
     env_logger::init_from_env(env);
 
-    let mut crawler = core_types::Crawler::new(BOOTSTRAP_PEER);
+    let mut crawler = crawl::Crawler::new(BOOTSTRAP_PEER);
     let report = crawler.crawl_network();
     let dir = "output";
     fs::create_dir_all(dir).expect("Error creating output directory");

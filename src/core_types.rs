@@ -26,7 +26,7 @@ pub struct Crawler {
 
 impl CrawledNode {
     pub fn new(url: String, online: bool, quorum_set: McQuorumSet) -> Self {
-        let (domain, port) = Self::resolve_url(url.clone());
+        let (domain, port) = Self::resolve_url(url);
         CrawledNode {
             public_key: Ed25519Public::default(),
             domain,
@@ -43,12 +43,10 @@ impl CrawledNode {
 
         let (ip, port_nr) = if domain.is_none() || port.is_none() {
             (IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)).to_string(), 0)
+        } else if let Some(resolved) = domain {
+            (String::from(resolved), port.unwrap_or(0))
         } else {
-            if let Some(resolved) = domain {
-                (String::from(resolved), port.unwrap_or_else(|| 0))
-            } else {
-                (IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)).to_string(), 0)
-            }
+            (IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)).to_string(), 0)
         };
         (ip, port_nr)
     }
@@ -73,7 +71,7 @@ impl Crawler {
     /// 3. Get the crawled node's PK from the response and add
     pub fn handle_discovered_node(&mut self, crawled_node: String, node: &mut CrawledNode) {
         self.to_crawl.remove(&crawled_node);
-        self.crawled.insert(crawled_node.clone());
+        self.crawled.insert(crawled_node);
         self.mobcoin_nodes.insert(node.clone());
         for member in node.quorum_set.nodes() {
             let address = format!("{}{}", "mc://", member.responder_id.to_string());
@@ -96,15 +94,13 @@ impl Crawler {
                 if other_node != node {
                     for member in other_node.quorum_set.nodes() {
                         let address = format!("{}{}", "mc://", member.responder_id.to_string());
-                        if node.public_key == Ed25519Public::default() {
-                            if responder_id == address {
-                                let node_now_with_pk = CrawledNode {
-                                    public_key: member.public_key,
-                                    ..node.clone()
-                                };
-                                mobcoin_nodes_with_pks.insert(node_now_with_pk);
-                                break;
-                            }
+                        if node.public_key == Ed25519Public::default() && responder_id == address {
+                            let node_now_with_pk = CrawledNode {
+                                public_key: member.public_key,
+                                ..node.clone()
+                            };
+                            mobcoin_nodes_with_pks.insert(node_now_with_pk);
+                            break;
                         }
                     }
                 }

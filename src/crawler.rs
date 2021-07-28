@@ -44,13 +44,13 @@ impl Crawler {
 
     /// Sends the given peer a gRPC and serialises its response into a QuorumSet.
     fn crawl_node(&mut self, peer: String) {
-        info!("Crawling peer: {}", peer.clone());
+        info!("Crawling peer: {}", peer);
         let mut reachable = false;
         let quorum_set = QuorumSet::empty();
         // We didn't even send the RPC so no need to take note of the node
         let rpc_client = match Self::prepare_rpc(peer.clone()) {
             None => {
-                warn!("Terminating crawl on peer {} .", peer.clone());
+                warn!("Terminating crawl on peer {} .", peer);
                 return;
             }
             Some(client) => client,
@@ -59,9 +59,9 @@ impl Crawler {
         // TODO: handle_discovered_node
         let rpc_response = match Self::send_rpc(rpc_client) {
             None => {
-                warn!("Error in RPC response from {} .", peer.clone());
+                warn!("Error in RPC response from {} .", peer);
                 let mut discovered = CrawledNode::new(peer.clone(), reachable, quorum_set);
-                self.handle_discovered_node(peer.to_string(), &mut discovered);
+                self.handle_discovered_node(peer, &mut discovered);
                 return;
             }
             Some(reply) => {
@@ -71,13 +71,13 @@ impl Crawler {
         };
         let quorum_set = match Self::deserialise_payload_to_quorum_set(rpc_response) {
             None => {
-                warn!("Couldn't deserialise message from {}.", peer.clone());
+                warn!("Couldn't deserialise message from {}.", peer);
                 QuorumSet::empty()
             }
             Some(qs) => qs,
         };
         let mut discovered = CrawledNode::new(peer.clone(), reachable, quorum_set);
-        self.handle_discovered_node(peer.to_string(), &mut discovered);
+        self.handle_discovered_node(peer, &mut discovered);
     }
 
     fn prepare_rpc(peer: String) -> Option<ConsensusPeerApiClient> {
@@ -117,12 +117,11 @@ impl Crawler {
             };
             msg
         };
-        let quorum_set = if let Some(msg) = consensus_msg {
+        if let Some(msg) = consensus_msg {
             Some(msg.scp_msg.quorum_set)
         } else {
             None
-        };
-        quorum_set
+        }
     }
 }
 

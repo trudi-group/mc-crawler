@@ -81,8 +81,9 @@ impl MobcoinNode {
 
 /// Serializes `buffer` to a lowercase hex string.
 pub fn key_to_base64<T, S>(buffer: &T, serializer: S) -> Result<S::Ok, S::Error>
-   where T: AsRef<[u8]>,
-           S: Serializer
+where
+    T: AsRef<[u8]>,
+    S: Serializer,
 {
     serializer.serialize_str(&base64::encode(&buffer))
 }

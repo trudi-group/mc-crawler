@@ -1,4 +1,4 @@
-# mc-crawler - A [MobilCoin](https://github.com/mobilecoinfoundation/mobilecoin) Network Crawler
+# mc-crawler - A [MobileCoin](https://github.com/mobilecoinfoundation/mobilecoin) Network Crawler
 This binary crawls the MobileCoin network and stores the results (as a JSON).
 The JSON contains the following data about every found node:
 
@@ -7,21 +7,23 @@ The JSON contains the following data about every found node:
     - Quorum Set
     - Public Key
     - Whether or not the node was online
+    - Geolocation data, e.g. country and ISP
 
-## Required Toolchain
-## 1. Install / check required tools
+## 1. Install required tools
 
    - [Rust](https://www.rust-lang.org)
         - Install: https://www.rust-lang.org/tools/install
-    - Rust's Nightly Compiler: `rustup toolchain install nightly-2021-03-25`
+   - Rust's Nightly Compiler
+        - `rustup toolchain install nightly-2021-03-25`
+        - `rustup override set nightly-2021-03-25`    
 
 ## 2. Environment Variables 
 Some of the crates used in this library need the Intel SGX environment variables
 `SGX_MODE` and `IAS_MODE`.
-You can set them in your terminal like below or pass them when building the binary.
+You can (optionally) set them in your terminal like below or pass them when building the binary.
 
-    ` export SGX_MODE=SW `
-    ` export IAS_MODE=DEV `
+    `export SGX_MODE=SW`
+    `export IAS_MODE=DEV`
 
 ## 3. Running the binary
     1. `SGX_MODE=SW IAS_MODE=DEV cargo run --release mc-crawler`

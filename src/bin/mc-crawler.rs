@@ -37,7 +37,7 @@ fn write_crawl_report_to_file(path: Option<&PathBuf>, timestamp: String, report:
     );
     let file = File::create(file_name.clone()).expect("Error creating file");
     info!("Writing report to file {}", file_name);
-    serde_json::to_writer(file, &report).expect("Error while writing report.");
+    serde_json::to_writer_pretty(file, &report).expect("Error while writing report.");
 }
 
 pub fn main() {

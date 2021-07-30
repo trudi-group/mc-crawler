@@ -36,17 +36,18 @@ impl CrawledNode {
         }
     }
 
+    /// Return 0.0.0.0 as an address if not resolvable otherwise the stats functions would return one own's geolocation
     fn resolve_url(url: String) -> (String, u16) {
         let url = Url::parse(&url).expect("Failed to parse into Url");
         let domain = url.domain();
         let port = url.port();
 
         let (ip, port_nr) = if domain.is_none() || port.is_none() {
-            (IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)).to_string(), 0)
+            (IpAddr::V4(Ipv4Addr::new(0, 0, 0, 0)).to_string(), 0)
         } else if let Some(resolved) = domain {
             (String::from(resolved), port.unwrap_or(0))
         } else {
-            (IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)).to_string(), 0)
+            (IpAddr::V4(Ipv4Addr::new(0, 0, 0, 0)).to_string(), 0)
         };
         (ip, port_nr)
     }
@@ -117,7 +118,7 @@ mod tests {
     #[test]
     fn bad_url_to_ip_port() {
         let url = "foo:443";
-        let expected = (String::from("127.0.0.1"), 0);
+        let expected = (String::from("0.0.0.0"), 0);
         let actual = CrawledNode::resolve_url(String::from(url));
         assert_eq!(expected, actual);
     }

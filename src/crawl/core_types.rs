@@ -1,5 +1,5 @@
 use std::collections::HashSet;
-use std::net::{IpAddr, Ipv4Addr};
+use std::net::{IpAddr, Ipv4Addr, ToSocketAddrs};
 use std::time::Duration;
 use url::Url;
 
@@ -26,7 +26,7 @@ pub struct Crawler {
 
 impl CrawledNode {
     pub fn new(url: String, online: bool, quorum_set: McQuorumSet) -> Self {
-        let (domain, port) = Self::resolve_url(url);
+        let (domain, port) = Self::fragment_mc_url(url);
         CrawledNode {
             public_key: Ed25519Public::default(),
             domain,
@@ -37,19 +37,31 @@ impl CrawledNode {
     }
 
     /// Return 0.0.0.0 as an address if not resolvable otherwise the stats functions would return one own's geolocation
-    fn resolve_url(url: String) -> (String, u16) {
+    fn fragment_mc_url(url: String) -> (String, u16) {
         let url = Url::parse(&url).expect("Failed to parse into Url");
         let domain = url.domain();
         let port = url.port();
 
         let (ip, port_nr) = if domain.is_none() || port.is_none() {
             (IpAddr::V4(Ipv4Addr::new(0, 0, 0, 0)).to_string(), 0)
-        } else if let Some(resolved) = domain {
-            (String::from(resolved), port.unwrap_or(0))
+        } else if let Some(host) = domain {
+            (String::from(host), port.unwrap_or(0))
         } else {
             (IpAddr::V4(Ipv4Addr::new(0, 0, 0, 0)).to_string(), 0)
         };
         (ip, port_nr)
+    }
+
+    pub fn resolve_hostname_to_ip(&self) -> IpAddr {
+        let hostname = format!("{}:{}", self.domain, self.port);
+        let mut addrs = hostname
+            .to_socket_addrs()
+            .expect("Unable to resolve address.");
+        if let Some(resolved) = addrs.next() {
+            resolved.ip()
+        } else {
+            IpAddr::V4(Ipv4Addr::new(0, 0, 0, 0))
+        }
     }
 }
 
@@ -119,7 +131,7 @@ mod tests {
     fn bad_url_to_ip_port() {
         let url = "foo:443";
         let expected = (String::from("0.0.0.0"), 0);
-        let actual = CrawledNode::resolve_url(String::from(url));
+        let actual = CrawledNode::fragment_mc_url(String::from(url));
         assert_eq!(expected, actual);
     }
 

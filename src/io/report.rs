@@ -1,4 +1,5 @@
 use crate::crawl::{CrawledNode, Crawler};
+use crate::stats::{Database, DbReader};
 
 use mc_consensus_scp::{QuorumSet as McQuorumSet, QuorumSetMember};
 use mc_crypto_keys::Ed25519Public;
@@ -15,6 +16,15 @@ pub struct MobcoinNode {
     pub port: u16,
     pub active: bool,
     pub quorum_set: QuorumSet,
+    #[serde(skip_serializing_if = "String::is_empty")]
+    pub isp: String,
+    pub geo_data: GeoData,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Default, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct GeoData {
+    pub country_name: String,
 }
 
 #[derive(Clone, Eq, PartialEq, Hash, Debug, Default, Serialize)]
@@ -68,13 +78,18 @@ impl QuorumSet {
 
 impl MobcoinNode {
     fn from_crawled_node(crawled_node: CrawledNode) -> Self {
-        let quorum_set = QuorumSet::from_mc_quorum_set(crawled_node.quorum_set);
+        let quorum_set = QuorumSet::from_mc_quorum_set(crawled_node.clone().quorum_set);
+        let ip_addr = crawled_node.resolve_hostname_to_ip();
+        let isp = DbReader::new(Database::Asn).lookup_isp(ip_addr);
+        let country_name = DbReader::new(Database::Country).lookup_country(ip_addr);
         Self {
             public_key: crawled_node.public_key,
             hostname: crawled_node.domain,
             port: crawled_node.port,
             active: crawled_node.online,
             quorum_set,
+            isp,
+            geo_data: GeoData { country_name },
         }
     }
 }

@@ -36,6 +36,7 @@ impl DbReader {
                 if let Some(map) = country_map {
                     map.get("en").unwrap().to_string()
                 } else {
+                    warn!("EN entry unavailable.");
                     "".to_string()
                 }
             }
@@ -53,6 +54,7 @@ impl DbReader {
                 if let Some(isp_name) = isp_info.isp {
                     isp_name.to_string()
                 } else {
+                    warn!("No ISP name entry found for {} in database.", ip);
                     "".to_string()
                 }
             }

@@ -1,12 +1,19 @@
 # mc-crawler - A [MobileCoin](https://github.com/mobilecoinfoundation/mobilecoin) Network Crawler
-This binary crawls the MobileCoin network and stores the results (as a JSON).
+
+This binary crawls the MobileCoin network and writes the results as a JSON.
+
+The crawler communicates with the validator nodes using RPCs provided by the [mc-consensus-api](https://github.com/mobilecoinfoundation/mobilecoin/tree/master/consensus/api), and asks each new node for the last consensus message it broadcast to the other validators.
+The response of the gRPC contains, among other information, the queried node's quorum set which in turn contains other validators that the crawler may have not yet seen.
+
+The crawler, therefore, only finds validators (no watcher nodes), and will not find nodes that are not included in any validator's quorum set.
+
 The JSON contains the following data about every found node:
 
     - Hostname
     - Port
     - Quorum Set
     - Public Key
-    - Reachability status
+    - Connectivity status
     - IP-based Geolocation data, i.e. country and ISP
 
 ## 1. Install required tools
@@ -15,6 +22,7 @@ The JSON contains the following data about every found node:
         - Install: https://www.rust-lang.org/tools/install
    - Rust's Nightly Compiler
         - `rustup toolchain install nightly-2021-03-25`
+   - In the project directory:
         - `rustup override set nightly-2021-03-25`    
         - The output of `rustup toolchain list` should now be similar to this:
         ```
@@ -45,5 +53,5 @@ SGX_MODE=SW IAS_MODE=DEV cargo build --release
 cargo run -- [--output output_directory --debug]
 ```
     - The output directory is `crawl_data` by default.
-    - Debug level messages are supressed by default.
+    - Debug level messages are suppressed by default.
       Passing `--debug` results in more verbose terminal output during the crawl.

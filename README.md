@@ -6,8 +6,8 @@ The JSON contains the following data about every found node:
     - Port
     - Quorum Set
     - Public Key
-    - Whether or not the node was online
-    - Geolocation data, e.g. country and ISP
+    - Reachability status
+    - IP-based Geolocation data, i.e. country and ISP
 
 ## 1. Install required tools
 
@@ -16,10 +16,16 @@ The JSON contains the following data about every found node:
    - Rust's Nightly Compiler
         - `rustup toolchain install nightly-2021-03-25`
         - `rustup override set nightly-2021-03-25`    
-
+        - The output of `rustup toolchain list` should now be similar to this:
+        ```
+        ...
+        nightly-2021-03-25-x86_64-unknown-linux-gnu (override)
+        ...
+        ```
 ## 2. Environment Variables 
 Some of the crates used in this library need the Intel SGX environment variables
 `SGX_MODE` and `IAS_MODE`.
+
 You can (optionally) set them in your terminal like below or pass them when building the binary.
 ```
 export SGX_MODE=SW
@@ -30,12 +36,14 @@ export IAS_MODE=DEV
 ## 3. Crawling the Network
 1. Build
 ```
-SGX_MODE=SW IAS_MODE=DEV cargo build --release`
+SGX_MODE=SW IAS_MODE=DEV cargo build --release
 ```
     - The environment variables are only necessary if you skipped step 2.
+    - The initial compilation will take several minutes due to some of the dependencies used in this project.
 2. Run
 ```
-cargo run -- [--output output_directory --debug]`
+cargo run -- [--output output_directory --debug]
 ```
     - The output directory is `crawl_data` by default.
-    - Debug level messages are supressed by default. Passing `--debug` results in more verbose terminal output during the crawl.
+    - Debug level messages are supressed by default.
+      Passing `--debug` results in more verbose terminal output during the crawl.

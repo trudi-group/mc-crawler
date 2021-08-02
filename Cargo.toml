@@ -3,8 +3,8 @@ version = "0.1.0"
 name = "mc-crawler"
 repository = "https://gitlab.informatik.hu-berlin.de/ti/theses/student-content/ndolo-charmaine-sp/mobilecoin-crawler"
 authors = ["Charmaine Ndolo <Charmaine.Ndolo@hu-berlin.de>"]
-description = "App Description"
-categories = ["category"]
+description = "A MobileCoin Network Crawler."
+keywords = ["mobilecoin", "blockchain", "fbas", "crawler"]
 license = "MIT"
 readme = "./README.md"
 edition = "2018"
@@ -28,6 +28,11 @@ mc-consensus-api = {git = "https://github.com/mobilecoinfoundation/mobilecoin"}
 mc-peers = {git = "https://github.com/mobilecoinfoundation/mobilecoin"}
 mc-util-serial = {git = "https://github.com/mobilecoinfoundation/mobilecoin"}
 mc-crypto-keys = {git = "https://github.com/mobilecoinfoundation/mobilecoin"}
+
+[profile.release]
+opt-level = 3
+rpath = false
+lto = false
 
 [patch.crates-io]
 # grpcio patched with metadata

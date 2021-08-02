@@ -2,6 +2,7 @@
 /pkg
 */dist
 /output
+/crawl_data
 **/*.rs.bk
 **/*.swp
 

@@ -211,6 +211,10 @@ mod tests {
             port: 443,
             quorum_set: QuorumSet::from_mc_quorum_set(crawled_node.quorum_set.clone()),
             active: false,
+            isp: String::from(""),
+            geo_data: GeoData {
+                country_name: String::from("United States"),
+            },
         };
         let actual = MobcoinNode::from_crawled_node(crawled_node);
         assert_eq!(expected, actual);

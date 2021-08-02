@@ -18,6 +18,10 @@ use mc_util_serial::deserialize;
 use mc_util_uri::ConsensusClientUri as ClientUri;
 
 impl Crawler {
+    /// This loop controls the entire crawl.
+    /// The crawl ends when there are no more peers in the queue.
+    /// We call get_public_keys_from_quorum_sets in order to get fill the CrawlReport with PK instead of hostnames.
+    /// The CrawlReport contains all nodes that were found ready to be written as a JSON.
     pub fn crawl_network(&mut self) -> CrawlReport {
         let start = Instant::now();
         let now: DateTime<Utc> = Utc::now();
@@ -42,7 +46,9 @@ impl Crawler {
         CrawlReport::create_crawl_report(self)
     }
 
-    /// Sends the given peer a gRPC and serialises its response into a QuorumSet.
+    /// 1. Sends the given peer a gRPC.
+    /// 2. Get its QSet.
+    /// 3. Call the handle_discovered_node method on the peer.
     fn crawl_node(&mut self, peer: String) {
         info!("Crawling peer: {}", peer);
         let mut reachable = false;
@@ -55,8 +61,6 @@ impl Crawler {
             }
             Some(client) => client,
         };
-        // RPC failure, e.g. no response
-        // TODO: handle_discovered_node
         let rpc_response = match Self::send_rpc(rpc_client) {
             None => {
                 warn!("Error in RPC response from {} .", peer);
@@ -80,6 +84,7 @@ impl Crawler {
         self.handle_discovered_node(peer, &mut discovered);
     }
 
+    /// Opens an RPC channel to the peer which can be used for communication later
     fn prepare_rpc(peer: String) -> Option<ConsensusPeerApiClient> {
         let env = Arc::new(EnvBuilder::new().build());
         let logger = logger::create_root_logger();
@@ -96,6 +101,9 @@ impl Crawler {
         Some(consensus_client)
     }
 
+    /// The RPC "get_latest_msg" expects an empty protobuf and returns the last ConsensusMsg a node
+    /// sent (see
+    /// https://github.com/mobilecoinfoundation/mobilecoin/blob/master/peers/src/consensus_msg.rs#L20 for the exact definition)
     fn send_rpc(client: ConsensusPeerApiClient) -> Option<GetLatestMsgResponse> {
         let response = match client.get_latest_msg(&empty::Empty::default()) {
             Ok(reply) => Some(reply),
@@ -107,6 +115,7 @@ impl Crawler {
         response
     }
 
+    /// The bytes of the RPC response is deserialised into an McQuorumSet::QuorumSet
     fn deserialise_payload_to_quorum_set(payload: GetLatestMsgResponse) -> Option<QuorumSet> {
         let consensus_msg = if payload.get_payload().is_empty() {
             None

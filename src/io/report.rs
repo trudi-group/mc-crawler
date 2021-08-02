@@ -7,9 +7,9 @@ use serde::{Serialize, Serializer};
 
 #[derive(Clone, Debug, PartialEq, Eq, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
-/// Representation of a MobileCoin node in Stellarbeat format
+/// Representation of a crawl::CrawledNode node in stellarbeat.io format.
+/// The CrawlReport is a collection of MobcoinNodes.
 pub struct MobcoinNode {
-    /// This is the URL
     #[serde(serialize_with = "key_to_base64")]
     pub public_key: Ed25519Public,
     pub hostname: String,
@@ -27,17 +27,19 @@ pub struct GeoData {
     pub country_name: String,
 }
 
+/// A MobcoinNode/ CrawledNode's QSet.
+/// It is equivalent to a mc_consensus_scp::QuorumSet, just encoded differently.
 #[derive(Clone, Eq, PartialEq, Hash, Debug, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct QuorumSet {
     pub threshold: u64,
-    /// Validators are identified using their URL starting with "mc://"
+    /// Validators are identified using their base64 encoded PKs
     pub validators: Vec<String>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub inner_quorum_sets: Vec<QuorumSet>,
 }
 
-/// The MobileCoin FBAS
+/// The MobileCoin FBAS.
 #[derive(Clone, Debug, PartialEq, Eq, Default, Serialize)]
 pub struct CrawlReport(Vec<MobcoinNode>);
 

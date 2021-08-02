@@ -6,26 +6,30 @@ use url::Url;
 use mc_consensus_scp::QuorumSet as McQuorumSet;
 use mc_crypto_keys::Ed25519Public;
 
+/// A CrawledNode is a MobileCoin network node that we have learned of during the crawl. The
+/// Crawler keeps a tally of these during a crawl and each will later be transformed to a MobCoinNode.
 #[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]
-pub struct CrawledNode {
-    pub public_key: Ed25519Public,
-    pub domain: String,
-    pub port: u16,
-    pub quorum_set: McQuorumSet,
-    pub online: bool,
+pub(crate) struct CrawledNode {
+    pub(crate) public_key: Ed25519Public,
+    pub(crate) domain: String,
+    pub(crate) port: u16,
+    pub(crate) quorum_set: McQuorumSet,
+    pub(crate) online: bool,
 }
 
+/// The Crawler object steers a crawl.
 #[derive(Clone, Debug, PartialEq, Eq, Default)]
 pub struct Crawler {
-    pub mobcoin_nodes: HashSet<CrawledNode>,
-    pub to_crawl: HashSet<String>,
+    pub(crate) mobcoin_nodes: HashSet<CrawledNode>,
+    pub(crate) to_crawl: HashSet<String>,
     pub crawled: HashSet<String>,
-    pub crawl_duration: Duration,
+    pub(crate) crawl_duration: Duration,
     pub crawl_time: String,
 }
 
 impl CrawledNode {
-    pub fn new(url: String, online: bool, quorum_set: McQuorumSet) -> Self {
+    /// Create a new CrawledNode using its hostname, connectivity status and Qset.
+    pub(crate) fn new(url: String, online: bool, quorum_set: McQuorumSet) -> Self {
         let (domain, port) = Self::fragment_mc_url(url);
         CrawledNode {
             public_key: Ed25519Public::default(),
@@ -66,6 +70,7 @@ impl CrawledNode {
 }
 
 impl Crawler {
+    /// Create a new Crawler and add a bootstrap peer.
     pub fn new(bootstrap_peer: &str) -> Self {
         let mut to_crawl: HashSet<String> = HashSet::new();
         to_crawl.insert(String::from(bootstrap_peer));
@@ -78,11 +83,10 @@ impl Crawler {
         }
     }
 
-    /// 0. Add he reporting node to the set of crawled nodes
+    /// 0. Add the reporting node to the set of crawled nodes
     /// 1. Add node to the set to discovered nodes
-    /// 2. Iterate over all members of the Qset and them to the set of peers that should be crawled
-    /// 3. Get the crawled node's PK from the response and add
-    pub fn handle_discovered_node(&mut self, crawled_node: String, node: &mut CrawledNode) {
+    /// 2. Iterate over all members of the Qset and add them to the set of peers that should be crawled
+    pub(crate) fn handle_discovered_node(&mut self, crawled_node: String, node: &mut CrawledNode) {
         self.to_crawl.remove(&crawled_node);
         self.crawled.insert(crawled_node);
         self.mobcoin_nodes.insert(node.clone());
@@ -98,7 +102,7 @@ impl Crawler {
     }
 
     /// Looks for each node's PK in the other node's Qsets
-    pub fn get_public_keys_from_quorum_sets(&self) -> HashSet<CrawledNode> {
+    pub(crate) fn get_public_keys_from_quorum_sets(&self) -> HashSet<CrawledNode> {
         let mut mobcoin_nodes_with_pks: HashSet<CrawledNode> = HashSet::new();
         // First get each node's PK
         for node in self.mobcoin_nodes.iter() {

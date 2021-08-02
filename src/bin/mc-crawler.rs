@@ -14,8 +14,9 @@ static BOOTSTRAP_PEER: &str = "mc://peer1.prod.mobilecoinww.com:443";
 #[derive(Debug, StructOpt)]
 struct Opt {
     /// Path to directory where JSON file should be saved.
-    /// Defaults to "output/"
-    output_dir: Option<PathBuf>,
+    /// Defaults to "crawl_data/"
+    #[structopt(short, long)]
+    output: Option<PathBuf>,
 
     /// Set log level to debug, i.e. more log messages
     /// Default is info which contains less runtime messages
@@ -28,7 +29,7 @@ fn write_crawl_report_to_file(path: Option<&PathBuf>, timestamp: String, report:
     let path_to_dir = if let Some(dir) = path {
         dir.as_path().display().to_string()
     } else {
-        String::from("output")
+        String::from("crawl_data")
     };
     fs::create_dir_all(path_to_dir.clone()).expect("Error creating output directory");
     let file_name = format!(
@@ -50,5 +51,5 @@ pub fn main() {
 
     let mut crawler = crawl::Crawler::new(BOOTSTRAP_PEER);
     let report = crawler.crawl_network();
-    write_crawl_report_to_file(args.output_dir.as_ref(), crawler.crawl_time, report);
+    write_crawl_report_to_file(args.output.as_ref(), crawler.crawl_time, report);
 }

@@ -30,36 +30,38 @@ The JSON contains the following data about every found node:
         nightly-2021-03-25-x86_64-unknown-linux-gnu (override)
         ...
         ```
-## 2. Environment Variables 
+    - [mobilecoinofficial/rust-mbedtls does not currently support gcc 11](https://github.com/mobilecoinofficial/rust-mbedtls/issues/6) 
+      which this project indirectly depends on. Release builds, therefore, fail if the latest gcc is used for compilation.
+      This can be fixed without downgrading the system-wide gcc by compiling the project with an older version of gcc,
+       e.g. `gcc-10`.
+      One possibility of doing so is via the CMake environment variables `CC` and `CXX` like below (in the project directory):
+      ```
+      export CC=/usr/bin/gcc-10 CXX=/usr/bin/g++-10
+      ```
+   Other methods of setting a different compiler can be found [here](https://gitlab.kitware.com/cmake/community/-/wikis/FAQ#how-do-i-use-a-different-compiler).
+
+## 2. (Optional) Environment Variables 
 Some of the crates used in this library need the Intel SGX environment variables
 `SGX_MODE` and `IAS_MODE`.
 
-You can (optionally) set them in your terminal like below or pass them when building the binary.
+You can set them in your terminal like below or pass them when [building the binary](#build).
 ```
-export SGX_MODE=SW
-export IAS_MODE=DEV
+export SGX_MODE=SW IAS_MODE=DEV
 
 ```
+Having set the environment variables, the SGX variables do not need to passed whenever
+a call to a cargo subcommand is made.
+Continue with the [section on running the crawler](#run).
 
 ## 3. Crawling the Network
-1. Build
+###. Build
 ```
 SGX_MODE=SW IAS_MODE=DEV cargo build --release
 ```
     - The environment variables are only necessary if you skipped step 2.
     - The initial compilation will take several minutes due to some of the dependencies used in this project.
-    - NB: If you have gcc 11 installed, the release build will likely fail. This is because of an error in 
-   [mobilecoinofficial/rust-mbedtls](https://github.com/mobilecoinofficial/rust-mbedtls/issues/6) which this project indirectly depends on.
 
-    This can be fixed without downgrading the system-wide gcc by compiling the project with an older version of gcc, e.g. `gcc-10`.
-    One possibility of doing so is via the CMake environment variables `CC` and `CXX` like below:
-
-    ```
-    export CC=/usr/bin/gcc-10 CXX=/usr/bin/g++-10
-    ```
-   Other methods of setting a different compiler can be found [here](https://gitlab.kitware.com/cmake/community/-/wikis/FAQ#how-do-i-use-a-different-compiler).
-
-2. Run
+###. Run
 ```
 cargo run --release -- [--output output_directory --debug]
 ```

@@ -48,13 +48,21 @@ SGX_MODE=SW IAS_MODE=DEV cargo build --release
 ```
     - The environment variables are only necessary if you skipped step 2.
     - The initial compilation will take several minutes due to some of the dependencies used in this project.
-    - NB: If you have gcc 11 installed, the release build will likely fail.
-      This is because of an error in [mobilecoinofficial/rust-mbedtls](https://github.com/mobilecoinofficial/rust-mbedtls/issues/6) which this project indirectly depends on.
+    - NB: If you have gcc 11 installed, the release build will likely fail. This is because of an error in 
+   [mobilecoinofficial/rust-mbedtls](https://github.com/mobilecoinofficial/rust-mbedtls/issues/6) which this project indirectly depends on.
+
+    This can be fixed without downgrading the system-wide gcc by compiling the project with an older version of gcc, e.g. `gcc-10`.
+    One possibility of doing so is via the CMake environment variables `CC` and `CXX` like below:
+
+    ```
+    export CC=/usr/bin/gcc-10 CXX=/usr/bin/g++-10
+    ```
+   Other methods of setting a different compiler can be found [here](https://gitlab.kitware.com/cmake/community/-/wikis/FAQ#how-do-i-use-a-different-compiler).
 
 2. Run
 ```
-cargo run -- [--output output_directory --debug]
+cargo run --release -- [--output output_directory --debug]
 ```
-    - The output directory is ```crawl_data``` by default.
+    - The default output directory is set to `crawl_data`.
     - Debug level messages are suppressed by default.
-      Passing ```--debug``` results in more verbose terminal output during the crawl.
+      Passing --debug results in more verbose terminal output during the crawl.

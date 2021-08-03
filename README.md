@@ -48,10 +48,13 @@ SGX_MODE=SW IAS_MODE=DEV cargo build --release
 ```
     - The environment variables are only necessary if you skipped step 2.
     - The initial compilation will take several minutes due to some of the dependencies used in this project.
+    - NB: If you have gcc 11 installed, the release build will likely fail.
+      This is because of an error in [mobilecoinofficial/rust-mbedtls](https://github.com/mobilecoinofficial/rust-mbedtls/issues/6) which this project indirectly depends on.
+
 2. Run
 ```
 cargo run -- [--output output_directory --debug]
 ```
-    - The output directory is `crawl_data` by default.
+    - The output directory is ```crawl_data``` by default.
     - Debug level messages are suppressed by default.
-      Passing `--debug` results in more verbose terminal output during the crawl.
+      Passing ```--debug``` results in more verbose terminal output during the crawl.

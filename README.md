@@ -40,7 +40,7 @@ The JSON contains the following data about every found node:
     export CC=/usr/bin/gcc-10 CXX=/usr/bin/g++-10
     ``` 
 
-## 2. (Optional) Environment Variables
+## 2. (Optional but recommended) Environment Variables
 Some of the crates used in this library need the Intel SGX environment variables
 `SGX_MODE` and `IAS_MODE`.
 
@@ -48,7 +48,7 @@ You can set them in your terminal like below or pass them when [building the bin
 
 `export SGX_MODE=SW IAS_MODE=DEV`
 
-Having set the environment variables, the SGX variables do not need to passed whenever
+Having set the environment variables, the SGX variables do not need to be passed whenever
 a call to a cargo subcommand is made.
 
 Continue to the [section on running the crawler](#run).
@@ -62,8 +62,9 @@ Continue to the [section on running the crawler](#run).
 
 ### Run
 
-`cargo run --release [-- --output output_directory --debug]`
+`SGX_MODE=SW IAS_MODE=DEV cargo run --release [-- --output output_directory --debug]`
 
+    - The environment variables are only necessary if you skipped step 2.
     - The default output directory is set to "crawl_data".
     - Debug level messages are suppressed by default.
       Passing --debug results in more verbose terminal output during the crawl.

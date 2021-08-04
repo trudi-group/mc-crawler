@@ -58,9 +58,13 @@ impl CrawledNode {
 
     pub fn resolve_hostname_to_ip(&self) -> IpAddr {
         let hostname = format!("{}:{}", self.domain, self.port);
-        let mut addrs = hostname
-            .to_socket_addrs()
-            .expect("Unable to resolve address.");
+        let mut addrs = match hostname.to_socket_addrs() {
+            Ok(socket) => socket,
+            Err(e) => {
+                warn!("Error resolving address {}: {}", e, hostname);
+                Vec::default().into_iter()
+            }
+        };
         if let Some(resolved) = addrs.next() {
             resolved.ip()
         } else {

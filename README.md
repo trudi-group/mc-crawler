@@ -1,6 +1,6 @@
 # mc-crawler - A [MobileCoin](https://github.com/mobilecoinfoundation/mobilecoin) Network Crawler
 
-This binary crawls the MobileCoin network and writes the results as a JSON.
+This binary crawls the MobileCoin network and writes the results as a JSON (and an optional CSV).
 
 The crawler communicates with the validator nodes using RPCs provided by the [mc-consensus-api](https://github.com/mobilecoinfoundation/mobilecoin/tree/master/consensus/api), and asks each new node for the last consensus message it broadcast to the other validators.
 The response of the gRPC contains, among other information, the queried node's quorum set which in turn contains other validators that the crawler may have not yet seen.
@@ -62,9 +62,10 @@ Continue to the [section on running the crawler](#run).
 
 ### Run
 
-`SGX_MODE=SW IAS_MODE=DEV cargo run --release [-- --output output_directory --debug]`
+`SGX_MODE=SW IAS_MODE=DEV cargo run --release [-- --output output_directory --debug --csv]`
 
     - The environment variables are only necessary if you skipped step 2.
     - The default output directory is set to "crawl_data".
+    - The crawler optionally writes the crawl report to a CSV file in addition to the JSON if the "csv" flag is passed.
     - Debug level messages are suppressed by default.
       Passing --debug results in more verbose terminal output during the crawl.

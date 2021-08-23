@@ -62,9 +62,10 @@ Continue to the [section on running the crawler](#run).
 
 ### Run
 
-`SGX_MODE=SW IAS_MODE=DEV cargo run --release [-- --output output_directory --debug]`
+`SGX_MODE=SW IAS_MODE=DEV cargo run --release [-- --output output_directory --debug --complete]`
 
     - The environment variables are only necessary if you skipped step 2.
     - The default output directory is set to "crawl_data".
+    - The crawler optionally writes a JSON with additional data about the crawl when "complete" is passed.
     - Debug level messages are suppressed by default.
       Passing --debug results in more verbose terminal output during the crawl.

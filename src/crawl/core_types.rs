@@ -20,10 +20,17 @@ pub(crate) struct CrawledNode {
 /// The Crawler object steers a crawl.
 #[derive(Clone, Debug, PartialEq, Eq, Default)]
 pub struct Crawler {
+    /// A HashSet of discovered nodes
     pub(crate) mobcoin_nodes: HashSet<CrawledNode>,
+    /// A HashSet of nodes to be crawled
     pub(crate) to_crawl: HashSet<String>,
+    /// A HashSet of nodes that have been crawled
     pub crawled: HashSet<String>,
+    /// The number of nodes the crawler got a response from
+    pub(crate) reachable_nodes: usize,
+    /// How long the crawl took
     pub(crate) crawl_duration: Duration,
+    /// The crawl's timestamp
     pub crawl_time: String,
 }
 
@@ -82,6 +89,7 @@ impl Crawler {
             mobcoin_nodes: HashSet::new(),
             to_crawl,
             crawled: HashSet::new(),
+            reachable_nodes: 0,
             crawl_duration: Duration::default(),
             crawl_time: String::default(),
         }
@@ -152,6 +160,7 @@ mod tests {
             mobcoin_nodes: HashSet::new(),
             to_crawl: to_crawl,
             crawled: HashSet::new(),
+            reachable_nodes: 0,
             crawl_duration: Duration::default(),
             crawl_time: String::default(),
         };

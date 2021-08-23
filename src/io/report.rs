@@ -4,6 +4,7 @@ use crate::stats::{Database, DbReader};
 use mc_consensus_scp::{QuorumSet as McQuorumSet, QuorumSetMember};
 use mc_crypto_keys::Ed25519Public;
 use serde::{Serialize, Serializer};
+use std::time::Duration;
 
 #[derive(Clone, Debug, PartialEq, Eq, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -43,6 +44,27 @@ pub struct QuorumSet {
 #[derive(Clone, Debug, PartialEq, Eq, Default, Serialize)]
 pub struct MobcoinFbas(Vec<MobcoinNode>);
 
+/// The CrawlReport contains the timestamp, crawl duration, number of nodes (and number of
+/// reachable nodes) as well as the MobcoinFbas.
+#[derive(Clone, Debug, PartialEq, Eq, Default, Serialize)]
+pub struct CrawlReport {
+    /// The crawl's timestamp
+    pub timestamp: String,
+    /// How long the crawl took
+    pub duration: Duration,
+    /// The MobileCoin Nodes
+    pub node_info: NodeInfo,
+    pub nodes: MobcoinFbas,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Default, Serialize)]
+/// Holds (general) data about the crawl and is included in the CrawlReport.
+#[serde(rename_all = "camelCase")]
+pub struct NodeInfo {
+    pub total_nodes: usize,
+    pub reachable_nodes: usize,
+}
+
 impl MobcoinFbas {
     pub fn create_mobcoin_fbas(crawler: &Crawler) -> Self {
         let nodes = crawler
@@ -51,6 +73,20 @@ impl MobcoinFbas {
             .map(|node| MobcoinNode::from_crawled_node(node.clone()))
             .collect();
         Self(nodes)
+    }
+}
+
+impl CrawlReport {
+    pub fn create_crawl_report(fbas: MobcoinFbas, crawler: &Crawler) -> Self {
+        Self {
+            timestamp: crawler.crawl_time.clone(),
+            duration: crawler.crawl_duration,
+            node_info: NodeInfo {
+                total_nodes: fbas.0.len(),
+                reachable_nodes: crawler.reachable_nodes,
+            },
+            nodes: fbas,
+        }
     }
 }
 

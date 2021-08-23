@@ -8,7 +8,7 @@ use serde::{Serialize, Serializer};
 #[derive(Clone, Debug, PartialEq, Eq, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
 /// Representation of a crawl::CrawledNode node in stellarbeat.io format.
-/// The CrawlReport is a collection of MobcoinNodes.
+/// The MobcoinFbas is a collection of MobcoinNodes.
 pub struct MobcoinNode {
     #[serde(serialize_with = "key_to_base64")]
     pub public_key: Ed25519Public,
@@ -41,10 +41,10 @@ pub struct QuorumSet {
 
 /// The MobileCoin FBAS.
 #[derive(Clone, Debug, PartialEq, Eq, Default, Serialize)]
-pub struct CrawlReport(Vec<MobcoinNode>);
+pub struct MobcoinFbas(Vec<MobcoinNode>);
 
-impl CrawlReport {
-    pub fn create_crawl_report(crawler: &Crawler) -> Self {
+impl MobcoinFbas {
+    pub fn create_mobcoin_fbas(crawler: &Crawler) -> Self {
         let nodes = crawler
             .mobcoin_nodes
             .iter()

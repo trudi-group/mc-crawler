@@ -1,5 +1,5 @@
 use crate::crawl::core_types::*;
-use crate::io::report::CrawlReport;
+use crate::io::report::MobcoinFbas;
 
 use chrono::{DateTime, Utc};
 use log::{info, warn};
@@ -20,9 +20,9 @@ use mc_util_uri::ConsensusClientUri as ClientUri;
 impl Crawler {
     /// This loop controls the entire crawl.
     /// The crawl ends when there are no more peers in the queue.
-    /// We call get_public_keys_from_quorum_sets in order to get fill the CrawlReport with PK instead of hostnames.
-    /// The CrawlReport contains all nodes that were found ready to be written as a JSON.
-    pub fn crawl_network(&mut self) -> CrawlReport {
+    /// We call get_public_keys_from_quorum_sets in order to get fill the MobcoinFbas with PK instead of hostnames.
+    /// The MobcoinFbas contains all nodes that were found ready to be written as a JSON.
+    pub fn crawl_network(&mut self) -> MobcoinFbas {
         let start = Instant::now();
         let now: DateTime<Utc> = Utc::now();
         info!("Starting crawl..");
@@ -43,7 +43,7 @@ impl Crawler {
         );
         let nodes_with_pks = self.get_public_keys_from_quorum_sets();
         self.mobcoin_nodes = nodes_with_pks;
-        CrawlReport::create_crawl_report(self)
+        MobcoinFbas::create_mobcoin_fbas(self)
     }
 
     /// 1. Sends the given peer a gRPC.

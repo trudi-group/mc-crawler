@@ -5,7 +5,7 @@ use std::fs::File;
 use std::path::PathBuf;
 use structopt::StructOpt;
 
-use mc_crawler::{crawl, io::CrawlReport};
+use mc_crawler::{crawl, io::MobcoinFbas};
 
 static BOOTSTRAP_PEER: &str = "mc://peer1.prod.mobilecoinww.com:443";
 
@@ -25,7 +25,7 @@ struct Opt {
     debug: bool,
 }
 
-fn write_crawl_report_to_file(path: Option<&PathBuf>, timestamp: String, report: CrawlReport) {
+fn write_crawl_report_to_file(path: Option<&PathBuf>, timestamp: String, report: MobcoinFbas) {
     let path_to_dir = if let Some(dir) = path {
         dir.as_path().display().to_string()
     } else {

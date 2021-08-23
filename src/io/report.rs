@@ -47,6 +47,7 @@ pub struct MobcoinFbas(Vec<MobcoinNode>);
 /// The CrawlReport contains the timestamp, crawl duration, number of nodes (and number of
 /// reachable nodes) as well as the MobcoinFbas.
 #[derive(Clone, Debug, PartialEq, Eq, Default, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct CrawlReport {
     /// The crawl's timestamp
     pub timestamp: String,
@@ -57,8 +58,8 @@ pub struct CrawlReport {
     pub nodes: MobcoinFbas,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Default, Serialize)]
 /// Holds (general) data about the crawl and is included in the CrawlReport.
+#[derive(Clone, Debug, PartialEq, Eq, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct NodeInfo {
     pub total_nodes: usize,

@@ -14,7 +14,7 @@ The JSON contains the following data about every found node:
     - Quorum Set
     - Public Key
     - Connectivity status
-    - IP-based Geolocation data, i.e. country and ISP
+    - (When available) IP-based Geolocation data, i.e. country and ISP
 
 ## 1. Required tools
 
@@ -69,3 +69,22 @@ Continue to the [section on running the crawler](#run).
     - The crawler optionally writes a JSON with additional data about the crawl when "complete" is passed.
     - Debug level messages are suppressed by default.
       Passing --debug results in more verbose terminal output during the crawl.
+
+## 4. Analysing the crawl data using the fbas_analyzer
+The results presented in the paper can all be reproduced using the data obtained from the crawler and the [fbas_analyzer](https://github.com/wiberlin/fbas_analyzer).
+
+Refer to its documentation for installation instructions before proceeding.
+
+Below are some example commands: (see `target/release/fbas_analyzer -h` for more analysis options)
+
+### Find all minimal quorums, minimal blocking sets and minimal splitting sets and output metrics about the sizes of the node sets. 
+`target/release/fbas_analyzer -adp mobilecoin_nodes_completed_manually_2021-08-02.json`
+
+### Find the same sets as above, but merge by organisations
+`target/release/fbas_analyzer -adp mobilecoin_nodes_completed_manually_2021-08-02.json --merge-by-org mobilecoin_organisations_2021-08-02_created_manually.json`
+
+### Find the same sets as above, but merge by ISPs
+`target/release/fbas_analyzer -adp mobilecoin_nodes_completed_manually_2021-08-02.json --merge-by-isp`
+
+### Find the same sets as above, but merge by countries and output lists of node lists (instead of metrics)
+`target/release/fbas_analyzer -ap mobilecoin_nodes_completed_manually_2021-08-02.json --merge-by-country`

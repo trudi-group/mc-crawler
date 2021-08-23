@@ -3,8 +3,7 @@ use crate::stats::{Database, DbReader};
 
 use mc_consensus_scp::{QuorumSet as McQuorumSet, QuorumSetMember};
 use mc_crypto_keys::Ed25519Public;
-
-use serde::{Deserialize, Serialize, Serializer};
+use serde::{Serialize, Serializer};
 
 #[derive(Clone, Debug, PartialEq, Eq, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -22,22 +21,7 @@ pub struct MobcoinNode {
     pub geo_data: GeoData,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Default, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-/// Representation of a crawl::CrawledNode node serialisable as a CSV.
-/// The difference to MobcoinNode is that the
-/// 1.ISP is written even if empty, 2. the QSet is omitted 3. geo_data is a string
-pub struct MobcoinNodeCsv {
-    #[serde(serialize_with = "key_to_base64")]
-    pub public_key: Ed25519Public,
-    pub hostname: String,
-    pub port: u16,
-    pub active: bool,
-    pub isp: String,
-    pub geo_data: String,
-}
-
-#[derive(Clone, Debug, PartialEq, Eq, Default, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GeoData {
     pub country_name: String,
@@ -59,10 +43,6 @@ pub struct QuorumSet {
 #[derive(Clone, Debug, PartialEq, Eq, Default, Serialize)]
 pub struct CrawlReport(Vec<MobcoinNode>);
 
-/// The MobileCoin FBAS w/o QSets.
-#[derive(Clone, Debug, PartialEq, Eq, Default, Serialize, Deserialize)]
-pub struct CsvReport(pub(crate) Vec<MobcoinNodeCsv>);
-
 impl CrawlReport {
     pub fn create_crawl_report(crawler: &Crawler) -> Self {
         let nodes = crawler
@@ -71,21 +51,6 @@ impl CrawlReport {
             .map(|node| MobcoinNode::from_crawled_node(node.clone()))
             .collect();
         Self(nodes)
-    }
-
-    pub fn to_csv_report(&self) -> CsvReport {
-        let mut csv_nodes: Vec<MobcoinNodeCsv> = vec![];
-        for node in &self.0 {
-            csv_nodes.push(MobcoinNodeCsv {
-                public_key: node.public_key,
-                hostname: node.hostname.clone(),
-                port: node.port,
-                active: node.active,
-                geo_data: node.geo_data.country_name.clone(),
-                isp: node.isp.clone(),
-            })
-        }
-        CsvReport(csv_nodes)
     }
 }
 
@@ -264,60 +229,5 @@ mod tests {
         };
         let actual = MobcoinNode::from_crawled_node(crawled_node);
         assert_eq!(expected, actual);
-    }
-
-    #[test]
-    fn crawl_report_to_csv_report() {
-        let quorum_set = QuorumSet {
-            threshold: 1,
-            validators: vec![base64::encode("test")],
-            inner_quorum_sets: Vec::default(),
-        };
-        let nodes = vec![
-            MobcoinNode {
-                public_key: Ed25519Public::default(),
-                hostname: String::from("foo.com"),
-                port: 80,
-                active: false,
-                quorum_set: quorum_set.clone(),
-                isp: String::from("Google"),
-                geo_data: GeoData {
-                    country_name: String::from("United States"),
-                },
-            },
-            MobcoinNode {
-                public_key: Ed25519Public::default(),
-                hostname: String::from("bar.com"),
-                port: 80,
-                active: false,
-                quorum_set,
-                isp: String::from(""),
-                geo_data: GeoData {
-                    country_name: String::from("United Kingdom"),
-                },
-            },
-        ];
-        let expected_nodes = vec![
-            MobcoinNodeCsv {
-                public_key: Ed25519Public::default(),
-                hostname: String::from("foo.com"),
-                port: 80,
-                active: false,
-                isp: String::from("Google"),
-                geo_data: String::from("United States"),
-            },
-            MobcoinNodeCsv {
-                public_key: Ed25519Public::default(),
-                hostname: String::from("bar.com"),
-                port: 80,
-                active: false,
-                isp: String::from(""),
-                geo_data: String::from("United Kingdom"),
-            },
-        ];
-        let crawl_report = CrawlReport(nodes);
-        let actual = crawl_report.to_csv_report();
-        let expected = CsvReport(expected_nodes);
-        assert_eq!(actual, expected);
     }
 }

@@ -9,7 +9,7 @@ use mc_crawler::{crawl, io::CrawlReport};
 
 static BOOTSTRAP_PEER: &str = "mc://peer1.prod.mobilecoinww.com:443";
 
-/// Crawl the MobileCoin Network and return the results in a JSON (and an optional CSV) that can be passed to other programs
+/// Crawl the MobileCoin Network and return the results in a JSON that can be passed to other programs
 /// for further analysis.
 #[derive(Debug, StructOpt)]
 struct Opt {
@@ -23,41 +23,22 @@ struct Opt {
     /// Usage example "cargo run-- -d"
     #[structopt(short, long)]
     debug: bool,
-
-    /// Provide additional crawl report as a CSV file.
-    /// It is written to the "output" directory in addition to the JSON.
-    #[structopt(long)]
-    csv: bool,
 }
 
-fn write_crawl_report_to_file(
-    path: Option<&PathBuf>,
-    write_csv: bool,
-    timestamp: String,
-    report: CrawlReport,
-) {
+fn write_crawl_report_to_file(path: Option<&PathBuf>, timestamp: String, report: CrawlReport) {
     let path_to_dir = if let Some(dir) = path {
         dir.as_path().display().to_string()
     } else {
         String::from("crawl_data")
     };
     fs::create_dir_all(path_to_dir.clone()).expect("Error creating output directory");
-    let json_file_name = format!(
+    let file_name = format!(
         "{}/{}{}{}",
         path_to_dir, "mobilecoin_nodes_", timestamp, ".json"
     );
-    let json_file = File::create(json_file_name.clone()).expect("Error creating JSON file");
-    info!("Writing JSON report to file {}", json_file_name);
-    report.write_json_report_to_file(json_file);
-    if write_csv {
-        let csv_file_name = format!(
-            "{}/{}{}{}",
-            path_to_dir, "mobilecoin_nodes_", timestamp, ".csv"
-        );
-        let csv_report = report.to_csv_report();
-        info!("Writing CSV report to file {}", csv_file_name);
-        csv_report.write_csv_report_to_file(csv_file_name);
-    }
+    let file = File::create(file_name.clone()).expect("Error creating file");
+    info!("Writing report to file {}", file_name);
+    serde_json::to_writer_pretty(file, &report).expect("Error while writing report.");
 }
 
 pub fn main() {
@@ -70,5 +51,5 @@ pub fn main() {
 
     let mut crawler = crawl::Crawler::new(BOOTSTRAP_PEER);
     let report = crawler.crawl_network();
-    write_crawl_report_to_file(args.output.as_ref(), args.csv, crawler.crawl_time, report);
+    write_crawl_report_to_file(args.output.as_ref(), crawler.crawl_time, report);
 }

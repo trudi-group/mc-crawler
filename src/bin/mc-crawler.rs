@@ -27,7 +27,15 @@ struct Opt {
     #[structopt(short, long)]
     debug: bool,
 
-    /// Provide complete crawl report as JSON in addition to the JSON containing the FBAS.
+    /// Output the found FBAS as JSON in stellarbeat.io format
+    /// The JSON contains information about each node's hostname, port, QSet, public key and
+    /// geolocation data when available.
+    /// Usage example "cargo run-- --fbas"
+    #[structopt(short, long)]
+    fbas: bool,
+
+    /// Provide complete crawl report as a JSON in addition to the FBAS written when only "--fbas" is
+    /// passed.
     /// Usage example "cargo run-- -c"
     #[structopt(short, long)]
     complete: bool,
@@ -81,13 +89,17 @@ pub fn main() {
 
     let mut crawler = crawl::Crawler::new(BOOTSTRAP_PEER);
     crawler.crawl_network();
-    let output_dir = create_output_dir(args.output.as_ref());
-    if output_dir.is_some() {
-        let fbas = MobcoinFbas::create_mobcoin_fbas(&crawler);
-        write_fbas_to_file(output_dir.clone(), crawler.crawl_time.clone(), fbas.clone());
-        if args.complete {
-            let report = CrawlReport::create_crawl_report(fbas, &crawler);
-            write_report_to_file(output_dir, crawler.crawl_time, report);
+    if args.fbas || args.complete {
+        let output_dir = create_output_dir(args.output.as_ref());
+        if output_dir.is_some() {
+            let fbas = MobcoinFbas::create_mobcoin_fbas(&crawler);
+            if args.fbas {
+                write_fbas_to_file(output_dir.clone(), crawler.crawl_time.clone(), fbas.clone());
+            }
+            if args.complete {
+                let report = CrawlReport::create_crawl_report(fbas, &crawler);
+                write_report_to_file(output_dir, crawler.crawl_time, report);
+            }
         }
     }
 }

@@ -1,13 +1,13 @@
 # mc-crawler - A [MobileCoin](https://github.com/mobilecoinfoundation/mobilecoin) Network Crawler
 
-This binary crawls the MobileCoin network and writes the results as a JSON.
+This binary crawls the MobileCoin network and optionally provides 2 JSONs in [stellarbeat.io](https://stellarbeat.io) format.
 
 The crawler communicates with the validator nodes using RPCs provided by the [mc-consensus-api](https://github.com/mobilecoinfoundation/mobilecoin/tree/master/consensus/api), and asks each new node for the last consensus message it broadcast to the other validators.
 The response of the gRPC contains, among other information, the queried node's quorum set which in turn contains other validators that the crawler may have not yet seen.
 
 The crawler, therefore, only finds validators (no watcher nodes), and will not find nodes that are not included in any validator's quorum set.
 
-The JSON contains the following data about every found node:
+The Nodes-JSON contains the following data about every found node:
 
     - Hostname
     - Port
@@ -15,6 +15,8 @@ The JSON contains the following data about every found node:
     - Public Key
     - Connectivity status
     - (When available) IP-based Geolocation data, i.e. country and ISP
+
+The Crawl Report contains the same data as the Nodes-JSON in addition to metadata about the crawl such as the duration and a timestamp.
 
 ## 1. Required tools
 
@@ -62,10 +64,11 @@ Continue to the [section on running the crawler](#run).
 
 ### Run
 
-`SGX_MODE=SW IAS_MODE=DEV cargo run --release [-- --output output_directory --debug --complete]`
+`SGX_MODE=SW IAS_MODE=DEV cargo run --release [-- --output output_directory --debug --fbas --complete]`
 
     - The environment variables are only necessary if you skipped step 2.
     - The default output directory is set to "crawl_data".
+    - The crawler optionally writes a JSON with the FBAS discovered during the crawl when "fbas" is passed.
     - The crawler optionally writes a JSON with additional data about the crawl when "complete" is passed.
     - Debug level messages are suppressed by default.
       Passing --debug results in more verbose terminal output during the crawl.

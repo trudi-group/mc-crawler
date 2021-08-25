@@ -1,7 +1,7 @@
 [package]
 version = "0.1.0"
 name = "mc-crawler"
-repository = "https://gitlab.informatik.hu-berlin.de/ti/theses/student-content/ndolo-charmaine-sp/mobilecoin-crawler"
+repository = "https://github.com/wiberlin/mc-crawler"
 authors = ["Charmaine Ndolo <Charmaine.Ndolo@hu-berlin.de>"]
 description = "A MobileCoin Network Crawler."
 keywords = ["mobilecoin", "blockchain", "fbas", "crawler"]

@@ -37,6 +37,11 @@ The Crawl Report contains the same data as the Nodes-JSON in addition to metadat
         nightly-2021-03-25-x86_64-unknown-linux-gnu (override)
         ...
         ```
+        N.B. After cloning the repository, you only need to do this once.
+
+   - Protobuf compiler `protoc` which can be built from source or installed using a package manager or , e.g.
+   
+        ``` apt install -y protobuf-compiler ``` on Ubuntu
 
   - The `mobilecoinofficial/rust-mbedtls` crate, which this project indirectly depends on, does not currently support gcc 11 (see [this issue](https://github.com/mobilecoinofficial/rust-mbedtls/issues/6)). Release builds, therefore, fail if the latest gcc is used for compilation.
   

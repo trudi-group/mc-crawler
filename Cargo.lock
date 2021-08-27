@@ -35,6 +35,7 @@ dependencies = [
  "cfg-if 1.0.0",
  "cipher",
  "cpufeatures",
+ "ctr 0.7.0",
  "opaque-debug",
 ]
 
@@ -1422,8 +1423,8 @@ dependencies = [
 
 [[package]]
 name = "mc-account-keys"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "blake2",
  "curve25519-dalek",
@@ -1438,13 +1439,14 @@ dependencies = [
  "mc-util-serial",
  "prost",
  "rand_core 0.6.3",
+ "subtle",
  "zeroize",
 ]
 
 [[package]]
 name = "mc-api"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "bs58",
  "cargo-emit",
@@ -1465,8 +1467,8 @@ dependencies = [
 
 [[package]]
 name = "mc-attest-ake"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "aead",
  "cargo-emit",
@@ -1484,8 +1486,8 @@ dependencies = [
 
 [[package]]
 name = "mc-attest-api"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "aead",
  "cargo-emit",
@@ -1503,8 +1505,8 @@ dependencies = [
 
 [[package]]
 name = "mc-attest-core"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "binascii",
  "bitflags",
@@ -1536,8 +1538,8 @@ dependencies = [
 
 [[package]]
 name = "mc-attest-enclave-api"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "displaydoc",
  "mc-attest-ake",
@@ -1549,8 +1551,8 @@ dependencies = [
 
 [[package]]
 name = "mc-common"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "backtrace",
  "binascii",
@@ -1585,8 +1587,8 @@ dependencies = [
 
 [[package]]
 name = "mc-connection"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "aes-gcm",
  "cookie",
@@ -1611,8 +1613,8 @@ dependencies = [
 
 [[package]]
 name = "mc-consensus-api"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "cargo-emit",
  "futures",
@@ -1627,8 +1629,8 @@ dependencies = [
 
 [[package]]
 name = "mc-consensus-enclave-api"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "displaydoc",
  "mc-attest-ake",
@@ -1646,8 +1648,8 @@ dependencies = [
 
 [[package]]
 name = "mc-consensus-scp"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "bigint",
  "maplit",
@@ -1689,8 +1691,8 @@ dependencies = [
 
 [[package]]
 name = "mc-crypto-box"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "aead",
  "blake2",
@@ -1704,8 +1706,8 @@ dependencies = [
 
 [[package]]
 name = "mc-crypto-digestible"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "cfg-if 0.1.10",
  "curve25519-dalek",
@@ -1718,8 +1720,8 @@ dependencies = [
 
 [[package]]
 name = "mc-crypto-digestible-derive"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "proc-macro2 1.0.27",
  "quote 1.0.9",
@@ -1728,8 +1730,8 @@ dependencies = [
 
 [[package]]
 name = "mc-crypto-digestible-signature"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "mc-crypto-digestible",
  "schnorrkel",
@@ -1738,8 +1740,8 @@ dependencies = [
 
 [[package]]
 name = "mc-crypto-hashes"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "blake2",
  "digest",
@@ -1748,8 +1750,8 @@ dependencies = [
 
 [[package]]
 name = "mc-crypto-keys"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "binascii",
  "curve25519-dalek",
@@ -1774,8 +1776,8 @@ dependencies = [
 
 [[package]]
 name = "mc-crypto-message-cipher"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "aes-gcm",
  "displaydoc",
@@ -1788,8 +1790,8 @@ dependencies = [
 
 [[package]]
 name = "mc-crypto-noise"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "aead",
  "aes-gcm",
@@ -1809,8 +1811,8 @@ dependencies = [
 
 [[package]]
 name = "mc-crypto-rand"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "cfg-if 0.1.10",
  "getrandom 0.1.16",
@@ -1821,8 +1823,8 @@ dependencies = [
 
 [[package]]
 name = "mc-fog-sig-authority"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "mc-crypto-keys",
  "signature",
@@ -1830,8 +1832,8 @@ dependencies = [
 
 [[package]]
 name = "mc-ledger-db"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "curve25519-dalek",
  "displaydoc",
@@ -1867,8 +1869,8 @@ dependencies = [
 
 [[package]]
 name = "mc-peers"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "crossbeam-channel",
  "displaydoc",
@@ -1897,8 +1899,8 @@ dependencies = [
 
 [[package]]
 name = "mc-sgx-build"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "cc",
  "lazy_static",
@@ -1908,8 +1910,8 @@ dependencies = [
 
 [[package]]
 name = "mc-sgx-compat"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "cfg-if 0.1.10",
  "mc-sgx-types",
@@ -1917,8 +1919,8 @@ dependencies = [
 
 [[package]]
 name = "mc-sgx-css"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "displaydoc",
  "sha2",
@@ -1926,8 +1928,8 @@ dependencies = [
 
 [[package]]
 name = "mc-sgx-report-cache-api"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "displaydoc",
  "mc-attest-core",
@@ -1938,20 +1940,22 @@ dependencies = [
 
 [[package]]
 name = "mc-sgx-types"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 
 [[package]]
 name = "mc-transaction-core"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
+ "aes",
  "blake2",
  "bulletproofs",
  "curve25519-dalek",
  "displaydoc",
  "generic-array",
  "hex_fmt",
+ "hkdf",
  "lazy_static",
  "mc-account-keys",
  "mc-common",
@@ -1966,14 +1970,15 @@ dependencies = [
  "prost",
  "rand_core 0.6.3",
  "serde",
+ "sha2",
  "subtle",
  "zeroize",
 ]
 
 [[package]]
 name = "mc-util-build-grpc"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "mc-util-build-script",
  "protoc-grpcio",
@@ -1981,13 +1986,13 @@ dependencies = [
 
 [[package]]
 name = "mc-util-build-info"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 
 [[package]]
 name = "mc-util-build-script"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "cargo-emit",
  "displaydoc",
@@ -1998,8 +2003,8 @@ dependencies = [
 
 [[package]]
 name = "mc-util-build-sgx"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "cargo-emit",
  "cc",
@@ -2010,8 +2015,8 @@ dependencies = [
 
 [[package]]
 name = "mc-util-encodings"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "base64 0.12.3",
  "binascii",
@@ -2023,16 +2028,16 @@ dependencies = [
 
 [[package]]
 name = "mc-util-from-random"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "rand_core 0.6.3",
 ]
 
 [[package]]
 name = "mc-util-grpc"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "base64 0.12.3",
  "cookie",
@@ -2060,13 +2065,13 @@ dependencies = [
 
 [[package]]
 name = "mc-util-host-cert"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 
 [[package]]
 name = "mc-util-lmdb"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "displaydoc",
  "lmdb-rkv",
@@ -2076,8 +2081,8 @@ dependencies = [
 
 [[package]]
 name = "mc-util-logger-macros"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "proc-macro2 0.4.30",
  "quote 0.6.13",
@@ -2086,8 +2091,8 @@ dependencies = [
 
 [[package]]
 name = "mc-util-metrics"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "chrono",
  "grpcio",
@@ -2100,8 +2105,8 @@ dependencies = [
 
 [[package]]
 name = "mc-util-repr-bytes"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "generic-array",
  "prost",
@@ -2110,8 +2115,8 @@ dependencies = [
 
 [[package]]
 name = "mc-util-serial"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "prost",
  "serde",
@@ -2120,8 +2125,8 @@ dependencies = [
 
 [[package]]
 name = "mc-util-uri"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "base64 0.12.3",
  "displaydoc",
@@ -2137,8 +2142,8 @@ dependencies = [
 
 [[package]]
 name = "mc-watcher-api"
-version = "1.1.0"
-source = "git+https://github.com/mobilecoinfoundation/mobilecoin#8d6bc0171627bd62c8ba29ba9ca70cbba35950b0"
+version = "1.1.2"
+source = "git+https://github.com/mobilecoinfoundation/mobilecoin#250811da0858d720c843d0bacd3d53c4f72ee39c"
 dependencies = [
  "displaydoc",
  "serde",

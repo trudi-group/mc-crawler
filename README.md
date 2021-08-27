@@ -1,5 +1,10 @@
 # mc-crawler - A [MobileCoin](https://github.com/mobilecoinfoundation/mobilecoin) Network Crawler
 
+[![Rust](https://camo.githubusercontent.com/5782bcc58a7786e9a7d00e2cf45937db8a2598232d9524ec9dcd149c7218671b/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f527573742d50726f6772616d6d696e672532304c616e67756167652d626c61636b3f7374796c653d666c6174266c6f676f3d72757374)](www.rust-lang.org)
+![MIT](https://img.shields.io/badge/license-MIT-blue.svg)
+[![CI](https://github.com/wiberlin/mc-crawler/actions/workflows/ci.yml/badge.svg)](https://github.com/wiberlin/mc-crawler/actions/workflows/ci.yml)
+
+
 This binary crawls the MobileCoin network and optionally provides 2 JSONs in [stellarbeat.io](https://stellarbeat.io) format.
 
 The crawler communicates with the validator nodes using RPCs provided by the [mc-consensus-api](https://github.com/mobilecoinfoundation/mobilecoin/tree/master/consensus/api), and asks each new node for the last consensus message it broadcast to the other validators.

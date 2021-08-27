@@ -1,5 +1,3 @@
-name: mc-crawler CI
-
 on:
   push:
     branches: 
@@ -7,6 +5,8 @@ on:
   pull_request:
     branches:
       - main
+
+name: Build
 
 env:
   CARGO_TERM_COLOR: always
@@ -16,13 +16,29 @@ env:
   CXX: g++-10
 
 jobs:
-  complete_test:
+  build:
+
     runs-on: ubuntu-latest
 
     steps:
+
+      - name: ⚙ Install protobuf compiler
+        run: |
+          sudo apt install -y protobuf-compiler
+
+      - uses: actions/checkout@v2
+      - name: ⚡ Cargo Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+ 
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
-      - name: Install nightly-2021-03-25 toolchain
+        name: ⚙ Install nightly-2021-03-25 toolchain
         with:
           profile: minimal
           toolchain: nightly-2021-03-25
@@ -30,16 +46,19 @@ jobs:
           components: rustfmt, clippy
 
       - uses: actions-rs/cargo@v1
+        name: 🔨 Build
         with:
           command: build
           args: --release
 
       - uses: actions-rs/cargo@v1
+        name: 🔎 Run unit tests
         with:
           command: test
           args: --release
 
       - uses: actions-rs/cargo@v1
+        name: ✅ Run cargo clippy
         with:
           command: clippy
           args: --release -- -D warnings

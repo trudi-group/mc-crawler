@@ -1,0 +1,46 @@
+name: mc-crawler CI
+
+on:
+  push:
+    branches: 
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  CARGO_TERM_COLOR: always
+  SGX_MODE: SW
+  IAS_MODE: DEV
+  CC: gcc-10
+  CXX: g++-10
+
+jobs:
+  complete_test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+      - name: Install nightly-2021-03-25 toolchain
+        with:
+          profile: minimal
+          toolchain: nightly-2021-03-25
+          override: true
+          components: rustfmt, clippy
+
+      - uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release
+
+      - uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --release
+
+      - uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: --release -- -D warnings
+

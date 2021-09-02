@@ -1,3 +1,5 @@
+name: Build
+
 on:
   push:
     branches: 
@@ -5,8 +7,6 @@ on:
   pull_request:
     branches:
       - main
-
-name: Build
 
 env:
   CARGO_TERM_COLOR: always
@@ -43,23 +43,17 @@ jobs:
           profile: minimal
           toolchain: nightly-2021-03-25
           override: true
-          components: rustfmt, clippy
 
       - uses: actions-rs/cargo@v1
         name: 🔨 Build
         with:
           command: build
           args: --release
+        env:
+          RUSTFLAGS: '-Copt-level=3 -Crpath=no -Clto=no'
 
       - uses: actions-rs/cargo@v1
         name: 🔎 Run unit tests
         with:
           command: test
           args: --release
-
-      - uses: actions-rs/cargo@v1
-        name: ✅ Run cargo clippy
-        with:
-          command: clippy
-          args: --release -- -D warnings
-

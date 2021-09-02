@@ -1,0 +1,72 @@
+name: Lint
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  CARGO_TERM_COLOR: always
+  SGX_MODE: SW
+  IAS_MODE: DEV
+  CC: gcc-10
+  CXX: g++-10
+
+jobs:
+  cargofmt:
+    name: rustfmt
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+
+      - name: ⚙ Install nightly-2021-03-25 toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly-2021-03-25
+          override: true
+          components: rustfmt
+
+      - name: ✅ Run rustfmt
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --all -- --check
+  clippy:
+    name: clippy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+
+      - name: ⚙ Install protobuf compiler
+        run: |
+          sudo apt install -y protobuf-compiler
+
+      - uses: actions/checkout@v2
+      - name: ⚡ Cargo Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: ⚙ Install nightly-2021-03-25 toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly-2021-03-25
+          override: true
+          components: clippy
+
+      - name: 📎 Run clippy
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: --release -- -D warnings

@@ -18,7 +18,7 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0.68"
 chrono = "0.4.19"
 base64 = "0.13.0"
-structopt = "0.3.23"
+structopt = "0.3.25"
 maxminddb = "0.21.0"
 mc-consensus-scp = {git = "https://github.com/mobilecoinfoundation/mobilecoin", rev = "103aa92bb0c8934d26de01b16c2ef1cbeebe3c95"}
 mc-util-uri = {git = "https://github.com/mobilecoinfoundation/mobilecoin", rev = "103aa92bb0c8934d26de01b16c2ef1cbeebe3c95"}

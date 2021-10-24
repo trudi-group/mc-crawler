@@ -117,12 +117,7 @@ impl QuorumSet {
 
 impl MobcoinNode {
     fn from_crawled_node(crawled_node: CrawledNode) -> Self {
-        let mut quorum_set = QuorumSet::from_mc_quorum_set(crawled_node.clone().quorum_set);
-        // Add node to own QSet and increase threshold
-        quorum_set.threshold += 1;
-        quorum_set
-            .validators
-            .push(base64::encode(crawled_node.public_key));
+        let quorum_set = QuorumSet::from_mc_quorum_set(crawled_node.clone().quorum_set);
         let ip_addr = crawled_node.resolve_hostname_to_ip();
         let isp = DbReader::new(Database::Asn).lookup_isp(ip_addr);
         let country_name = DbReader::new(Database::Country).lookup_country(ip_addr);
@@ -249,12 +244,9 @@ mod tests {
             ),
             online: false,
         };
-        let pk = Ed25519Public::default();
-        let mut quorum_set = QuorumSet::from_mc_quorum_set(crawled_node.quorum_set.clone());
-        quorum_set.threshold += 1;
-        quorum_set.validators.push(base64::encode(pk));
+        let quorum_set = QuorumSet::from_mc_quorum_set(crawled_node.quorum_set.clone());
         let expected = MobcoinNode {
-            public_key: pk,
+            public_key: Ed25519Public::default(),
             hostname: "test.foo.com".to_string(),
             port: 443,
             quorum_set,

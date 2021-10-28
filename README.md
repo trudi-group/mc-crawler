@@ -59,7 +59,9 @@ Some of the crates used in this library need the Intel SGX environment variables
 
 You can set them in your terminal like below or pass them when [building the binary](#build).
 
-`export SGX_MODE=SW IAS_MODE=DEV`
+```
+export SGX_MODE=SW IAS_MODE=DEV
+```
 
 Having set the environment variables, the SGX variables do not need to be passed whenever
 a call to a cargo subcommand is made.

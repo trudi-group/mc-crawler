@@ -81,10 +81,12 @@ impl CrawledNode {
 }
 
 impl Crawler {
-    /// Create a new Crawler and add a bootstrap peer.
-    pub fn new(bootstrap_peer: &str) -> Self {
+    /// Create a new Crawler and add bootstrap peers.
+    pub fn new(bootstrap_peers: Vec<String>) -> Self {
         let mut to_crawl: HashSet<String> = HashSet::new();
-        to_crawl.insert(String::from(bootstrap_peer));
+        for peer in bootstrap_peers {
+            to_crawl.insert(peer);
+        }
         Crawler {
             mobcoin_nodes: HashSet::new(),
             to_crawl,
@@ -153,9 +155,10 @@ mod tests {
 
     #[test]
     fn create_new_crawler() {
-        let bs_peer = "foo";
+        let bs_peers = vec![String::from("foo"), String::from("bar")];
         let mut to_crawl: HashSet<String> = HashSet::new();
         to_crawl.insert(String::from("foo"));
+        to_crawl.insert(String::from("bar"));
         let expected = Crawler {
             mobcoin_nodes: HashSet::new(),
             to_crawl: to_crawl,
@@ -164,7 +167,7 @@ mod tests {
             crawl_duration: Duration::default(),
             crawl_time: String::default(),
         };
-        let actual = Crawler::new(bs_peer);
+        let actual = Crawler::new(bs_peers);
         assert_eq!(expected, actual);
     }
 }

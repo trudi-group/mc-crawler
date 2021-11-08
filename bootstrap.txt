@@ -1,0 +1,4 @@
+// MobileCoin WorldWide
+mc://peer1.prod.mobilecoinww.com:443
+// Blockdaemon
+mc://blockdaemon.mobilecoin.bdnodes.net:8443

@@ -77,9 +77,10 @@ Continue to the [section on running the crawler](#run).
 
 ### Run
 
-`SGX_MODE=SW IAS_MODE=DEV cargo run --release [-- --output output_directory --debug --fbas --complete]`
+`SGX_MODE=SW IAS_MODE=DEV cargo run --release [-- path_to_bootstrap_file --output output_directory --debug --fbas --complete]`
 
     - The environment variables are only necessary if you skipped step 2.
+    - Nodes that should be used to bootstrap the crawler are read from text file in which each node's URI is stored on a separate line. The default is "bootstrap.txt".
     - The default output directory is set to "crawl_data".
     - The crawler optionally writes a JSON with the FBAS discovered during the crawl when "fbas" is passed.
     - The crawler optionally writes a JSON with additional data about the crawl when "complete" is passed.

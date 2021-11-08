@@ -1,16 +1,14 @@
 use env_logger::Env;
-use log::{info, warn};
-use std::fs;
-use std::fs::File;
-use std::path::PathBuf;
+use log::{debug, info, warn};
+use std::fs::{self, File};
+use std::io::{BufRead, BufReader};
+use std::path::{Path, PathBuf};
 use structopt::StructOpt;
 
 use mc_crawler::{
     crawl,
     io::{CrawlReport, MobcoinFbas},
 };
-
-static BOOTSTRAP_PEER: &str = "mc://peer1.prod.mobilecoinww.com:443";
 
 /// Crawl the MobileCoin Network and return the results in a JSON that can be passed to other programs
 /// for further analysis.
@@ -39,6 +37,12 @@ struct Opt {
     /// Usage example "cargo run-- -c"
     #[structopt(short, long)]
     complete: bool,
+
+    /// Path to text file with the bootstrap nodes as URIs.
+    /// Each node expected on a new line while lines beginning with "//" are understood to be
+    /// comments and ignored.
+    /// Will default to "./bootstrap.txt" if omitted.
+    nodes_path: Option<PathBuf>,
 }
 
 fn create_output_dir(path: Option<&PathBuf>) -> Option<String> {
@@ -79,6 +83,27 @@ fn write_fbas_to_file(output_dir: Option<String>, timestamp: String, fbas: Mobco
     };
 }
 
+fn read_bs_peers(path: Option<&PathBuf>) -> Vec<String> {
+    let mut bs_peers: Vec<String> = vec![];
+    let file_path = if let Some(bs_path) = path {
+        bs_path.as_path()
+    } else {
+        Path::new("bootstrap.txt")
+    };
+    let file = File::open(file_path).expect("Error opening bootstrap file.");
+    info!("Reading bootstrap peers from {:?}", file_path);
+    let reader = BufReader::new(file);
+    for line in reader.lines() {
+        let peer_uri = line.expect("Error while reading peer URI.");
+        if peer_uri.starts_with("//") {
+            continue;
+        }
+        bs_peers.push(peer_uri)
+    }
+    debug!("Read {} bootstrap peers.", bs_peers.len());
+    bs_peers
+}
+
 pub fn main() {
     let args = Opt::from_args();
     let log_level = if args.debug { "debug" } else { "info" };
@@ -87,7 +112,8 @@ pub fn main() {
         .write_style_or("MY_LOG_STYLE", "always");
     env_logger::init_from_env(env);
 
-    let mut crawler = crawl::Crawler::new(BOOTSTRAP_PEER);
+    let bs_peers = read_bs_peers(args.nodes_path.as_ref());
+    let mut crawler = crawl::Crawler::new(bs_peers);
     crawler.crawl_network();
     if args.fbas || args.complete {
         let output_dir = create_output_dir(args.output.as_ref());

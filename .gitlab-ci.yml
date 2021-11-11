@@ -1,15 +1,12 @@
+image: rustlang/nightly-2021-03-25
+
 default:
 before_script:
-  - echo "Installing Rust toolchain"
-  - curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-  - rustup toolchain install nightly-2021-03-25
-  - rustup override set nightly-2021-03-25
-  - rustup toolchain list
-  - rustc --version
-  - cargo --version
   - sudo apt-get update && apt-get -y protobuf-compiler
   - sudo apt-get install gcc-10 g++-10
   - rustup override set nightly-2021-03-25
+  - rustc --version
+  - cargo --version
 
 variables:
   SGX_MODE: SW

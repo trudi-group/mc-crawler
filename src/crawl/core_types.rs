@@ -101,6 +101,7 @@ impl Crawler {
     /// 1. Add node to the set to discovered nodes
     /// 2. Iterate over all members of the Qset and add them to the set of peers that should be crawled
     pub(crate) fn handle_discovered_node(&mut self, crawled_node: String, node: &mut CrawledNode) {
+        debug!("Handling crawled node {}..", crawled_node);
         self.to_crawl.remove(&crawled_node);
         self.crawled.insert(crawled_node);
         self.mobcoin_nodes.insert(node.clone());
@@ -120,22 +121,23 @@ impl Crawler {
         let mut mobcoin_nodes_with_pks: HashSet<CrawledNode> = HashSet::new();
         // First get each node's PK
         for node in self.mobcoin_nodes.iter() {
+            let mut node_now_with_pk = node.clone();
+            // Add the node to set already otherwise it will be left out of the report if 1. the
+            // crawler does not know other nodes 2. it wasn't found in the other qsets 3. sth else
+            // I haven't thought of
             let responder_id = format!("{}{}:{}", "mc://", node.domain, node.port);
             for other_node in self.mobcoin_nodes.iter() {
                 if other_node != node {
                     for member in other_node.quorum_set.nodes() {
                         let address = format!("{}{}", "mc://", member.responder_id.to_string());
                         if node.public_key == Ed25519Public::default() && responder_id == address {
-                            let node_now_with_pk = CrawledNode {
-                                public_key: member.public_key,
-                                ..node.clone()
-                            };
-                            mobcoin_nodes_with_pks.insert(node_now_with_pk);
+                            node_now_with_pk.public_key = member.public_key;
                             break;
                         }
                     }
                 }
             }
+            mobcoin_nodes_with_pks.insert(node_now_with_pk);
         }
         mobcoin_nodes_with_pks
     }

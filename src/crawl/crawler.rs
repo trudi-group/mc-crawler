@@ -60,28 +60,29 @@ impl Crawler {
             }
             Some(client) => client,
         };
-        let rpc_response = match Self::send_rpc(rpc_client) {
+        let rpc_success = match Self::send_rpc(rpc_client) {
             None => {
-                warn!("Error in RPC response from {} .", peer);
-                let mut discovered = CrawledNode::new(peer.clone(), reachable, quorum_set);
-                self.handle_discovered_node(peer, &mut discovered);
-                return;
+                warn!("Failure sending RPC to {} .", peer);
+                None
             }
             Some(reply) => {
                 self.reachable_nodes += 1;
                 reachable = true;
-                reply
+                Some(reply)
             }
         };
-        let quorum_set = match Self::deserialise_payload_to_quorum_set(rpc_response) {
-            None => {
-                warn!("Couldn't deserialise message from {}.", peer);
-                QuorumSet::empty()
-            }
-            Some(qs) => qs,
+        let qset = match rpc_success {
+            Some(rpc_response) => match Self::deserialise_payload_to_quorum_set(rpc_response) {
+                None => {
+                    warn!("Couldn't deserialise message from {}.", peer);
+                    QuorumSet::empty()
+                }
+                Some(qs) => qs,
+            },
+            None => quorum_set,
         };
-        let mut discovered = CrawledNode::new(peer.clone(), reachable, quorum_set);
-        self.handle_discovered_node(peer, &mut discovered);
+        let mut crawled = CrawledNode::new(peer.clone(), reachable, qset);
+        self.handle_discovered_node(peer, &mut crawled);
     }
 
     /// Opens an RPC channel to the peer which can be used for communication later

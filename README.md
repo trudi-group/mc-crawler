@@ -28,18 +28,7 @@ The Crawl Report contains the same data as the Nodes-JSON in addition to metadat
 
    - [Rust](https://www.rust-lang.org)
         - Install: https://www.rust-lang.org/tools/install
-   - Rust's Nightly Compiler
-        - `rustup toolchain install nightly-2021-03-25`
-   - In the project directory:
-        - `rustup override set nightly-2021-03-25`    
-        - The output of `rustup toolchain list` should now be similar to this:
-        ```
-        ...
-        nightly-2021-03-25-x86_64-unknown-linux-gnu (override)
-        ...
-        ```
-        N.B. After cloning the repository, you only need to do this once.
-
+   - Rust's `nightly-2021-03-25` compiler which will be downloaded and installed automatically
    - Protobuf compiler `protoc` which can be built from source or installed using a package manager or , e.g.
    
         ``` apt install -y protobuf-compiler ``` on Ubuntu

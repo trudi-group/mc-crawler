@@ -37,12 +37,6 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
  
       - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        name: ⚙ Install nightly-2021-03-25 toolchain
-        with:
-          profile: minimal
-          toolchain: nightly-2021-03-25
-          override: true
 
       - uses: actions-rs/cargo@v1
         name: 🔨 Build

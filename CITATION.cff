@@ -1,0 +1,42 @@
+cff-version: "1.2.0"
+message: "If you use this software, please cite it as below."
+
+authors:
+- given-names: Charmaine
+  family-names: Ndolo
+  affiliation: >-
+    Humboldt University of Berlin / Weizenbaum
+    Institute
+- given-names: Sebastian
+  family-names: Henningsen
+  affiliation: >-
+    Humboldt University of Berlin / Weizenbaum
+    Institute
+- given-names: Martin
+  family-names: Florian
+  affiliation: >-
+    Humboldt University of Berlin / Weizenbaum
+    Institute
+title: "Crawling the MobileCoin Quorum System"
+
+preferred-citation:
+  type: generic
+  title: "Crawling the MobileCoin Quorum System"
+  url: 'https://arxiv.org/abs/2111.12364'
+  date-released: '2021-11-24'
+  authors:
+    - given-names: Charmaine
+      family-names: Ndolo
+      affiliation: >-
+        Humboldt University of Berlin / Weizenbaum
+        Institute
+    - given-names: Sebastian
+      family-names: Henningsen
+      affiliation: >-
+        Humboldt University of Berlin / Weizenbaum
+        Institute
+    - given-names: Martin
+      family-names: Florian
+      affiliation: >-
+        Humboldt University of Berlin / Weizenbaum
+        Institute

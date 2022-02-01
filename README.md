@@ -24,6 +24,12 @@ The Nodes-JSON contains the following data about every found node:
 
 The Crawl Report contains the same data as the Nodes-JSON in addition to metadata about the crawl such as the duration and a timestamp.
 
+We maintain an HTTP API at [https://api.crawler.mc.trudi.group/v1](https://api.crawler.mc.trudi.group/v1) with crawl data dating back to 23<sup>rd</sup> August 2021.
+
+The API returns a single JSON file of the crawl recorded at the requested timestamp which must be provided as an RFC 3339 and ISO 8601 date and time string.
+
+The most recent data can be retrieved by not passing a timestamp; the oldest with [https://api.crawler.mc.trudi.group/v1/2021-08-23T20:00:00.007Z](https://api.crawler.mc.trudi.group/v1/2021-08-23T20:00:00.007Z).
+
 ## 1. Required tools
 
    - [Rust](https://www.rust-lang.org)

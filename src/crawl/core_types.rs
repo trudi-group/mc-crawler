@@ -106,7 +106,7 @@ impl Crawler {
         self.crawled.insert(crawled_node);
         self.mobcoin_nodes.insert(node.clone());
         for member in node.quorum_set.nodes() {
-            let address = format!("{}{}", "mc://", member.responder_id.to_string());
+            let address = format!("{}{}", "mc://", member.responder_id);
             if self.crawled.get(&address).is_some() {
                 continue;
             } else {
@@ -129,7 +129,7 @@ impl Crawler {
             for other_node in self.mobcoin_nodes.iter() {
                 if other_node != node {
                     for member in other_node.quorum_set.nodes() {
-                        let address = format!("{}{}", "mc://", member.responder_id.to_string());
+                        let address = format!("{}{}", "mc://", member.responder_id);
                         if node.public_key == Ed25519Public::default() && responder_id == address {
                             node_now_with_pk.public_key = member.public_key;
                             break;

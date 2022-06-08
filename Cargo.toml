@@ -1,5 +1,5 @@
 [package]
-version = "0.2.1"
+version = "0.2.0"
 name = "mc-crawler"
 repository = "https://github.com/wiberlin/mc-crawler"
 authors = ["Charmaine Ndolo <Charmaine.Ndolo@hu-berlin.de>"]
@@ -10,7 +10,7 @@ readme = "./README.md"
 edition = "2018"
 
 [dependencies]
-grpcio = "0.10.2"
+grpcio = "0.9"
 log = "0.4"
 env_logger = "0.9"
 url = "2.2"
@@ -20,39 +20,49 @@ chrono = "0.4"
 base64 = "0.13"
 structopt = "0.3"
 maxminddb = "0.21"
-mc-consensus-scp = {git = "https://github.com/mobilecoinfoundation/mobilecoin", tag = "v1.2.1"}
-mc-util-uri = {git = "https://github.com/mobilecoinfoundation/mobilecoin", tag = "v1.2.1"}
-mc-util-grpc = {git = "https://github.com/mobilecoinfoundation/mobilecoin", tag = "v1.2.1"}
-mc-common = {git = "https://github.com/mobilecoinfoundation/mobilecoin", tag = "v1.2.1"}
-mc-consensus-api = {git = "https://github.com/mobilecoinfoundation/mobilecoin", tag = "v1.2.1"}
-mc-peers = {git = "https://github.com/mobilecoinfoundation/mobilecoin", tag = "v1.2.1"}
-mc-util-serial = {git = "https://github.com/mobilecoinfoundation/mobilecoin", tag = "v1.2.1"}
-mc-crypto-keys = {git = "https://github.com/mobilecoinfoundation/mobilecoin", tag = "v1.2.1"}
+mc-consensus-scp = {git = "https://github.com/mobilecoinfoundation/mobilecoin", rev = "103aa92bb0c8934d26de01b16c2ef1cbeebe3c95"}
+mc-util-uri = {git = "https://github.com/mobilecoinfoundation/mobilecoin", rev = "103aa92bb0c8934d26de01b16c2ef1cbeebe3c95"}
+mc-util-grpc = {git = "https://github.com/mobilecoinfoundation/mobilecoin", rev = "103aa92bb0c8934d26de01b16c2ef1cbeebe3c95"}
+mc-common = {git = "https://github.com/mobilecoinfoundation/mobilecoin", rev = "103aa92bb0c8934d26de01b16c2ef1cbeebe3c95"}
+mc-consensus-api = {git = "https://github.com/mobilecoinfoundation/mobilecoin", rev = "103aa92bb0c8934d26de01b16c2ef1cbeebe3c95"}
+mc-peers = {git = "https://github.com/mobilecoinfoundation/mobilecoin", rev = "103aa92bb0c8934d26de01b16c2ef1cbeebe3c95"}
+mc-util-serial = {git = "https://github.com/mobilecoinfoundation/mobilecoin", rev = "103aa92bb0c8934d26de01b16c2ef1cbeebe3c95"}
+mc-crypto-keys = {git = "https://github.com/mobilecoinfoundation/mobilecoin", rev = "103aa92bb0c8934d26de01b16c2ef1cbeebe3c95"}
 
 [profile.release]
 opt-level = 3
 rpath = false
 lto = false
 
-# Taken from https://github.com/mobilecoinfoundation/mobilecoin/blob/v1.2.0/Cargo.toml
+# Taken from https://github.com/mobilecoinfoundation/mobilecoin/blob/master/Cargo.toml
 [patch.crates-io]
+# grpcio patched with metadata
+grpcio = { git = "https://github.com/mobilecoinofficial/grpc-rs", rev = "10ba9f8f4546916c7e7532c4d1c6cdcf5df62553" }
+protoc-grpcio = { git = "https://github.com/mobilecoinofficial/protoc-grpcio", rev = "9e63f09ec408722f731c9cb60bf06c3d46bcabec" }
 
-# Fork and rename to use "OG" dalek-cryptography.
-bulletproofs-og = { git = "https://github.com/mobilecoinfoundation/bulletproofs.git", rev = "65f8af4ca0bc1cb2fd2148c3259a0a76b155ff3e" }
+# ed25519-dalek depends on rand 0.7 which in turns depends on a broken version of packed_simd
+# This is a PR that moves it to newer rand
+# See https://github.com/dalek-cryptography/ed25519-dalek/pull/160
+ed25519-dalek = { git = "https://github.com/eranrund/ed25519-dalek.git", rev = "484369672f45d776fe13fdd17618aed2f4047909" }
 
-# Fix issues with recent nightlies, bump curve25519-dalek version
-curve25519-dalek = { git = "https://github.com/mobilecoinfoundation/curve25519-dalek.git", rev = "8791722e0273762552c9a056eaccb7df6baf44d7" }
-ed25519-dalek = { git = "https://github.com/mobilecoinfoundation/ed25519-dalek.git", rev = "4194e36abc75722e6fba7d552e719448fc38c51f" }
-x25519-dalek = { git = "https://github.com/mobilecoinfoundation/x25519-dalek.git", rev = "c1966b8743d320cd07a54191475e5c0f94b2ea30" }
+# Bump curve25519-dalek version to 4.0.0-pre0
+x25519-dalek = { git = "https://github.com/eranrund/x25519-dalek.git", rev = "57c04e5c5aca3551c015167d8176393fbe76dc65" }
 
-schnorrkel-og = { git = "https://github.com/mobilecoinfoundation/schnorrkel.git", rev = "5c98ae068ee4652d6df6463b549fbf2d5d132faa" }
 # Overridden since we need a commit that uprevs a bunch of dependencies.
+schnorrkel = { git = "https://github.com/mobilecoinofficial/schnorrkel", rev = "fa27d0ed32d251a27399a23d3ef69611acb14d56" }
 
 # mbedtls patched to allow certificate verification with a profile
-mbedtls = { git = "https://github.com/mobilecoinfoundation/rust-mbedtls.git", rev = "ac6ee17a31e37311ce7f4fa0649c340e5d85258d" }
-mbedtls-sys-auto = { git = "https://github.com/mobilecoinfoundation/rust-mbedtls.git", rev = "ac6ee17a31e37311ce7f4fa0649c340e5d85258d" }
+mbedtls = { git = "https://github.com/mobilecoinofficial/rust-mbedtls.git", rev = "c7fa3f0c737f36af8f437e147131d1f5c8a90b0e" }
+mbedtls-sys-auto = { git = "https://github.com/mobilecoinofficial/rust-mbedtls.git", rev = "c7fa3f0c737f36af8f437e147131d1f5c8a90b0e" }
+
+# prost is patched with no_std support (https://github.com/danburkert/prost/pull/319)
+# current revision is from jun 13 2020, waiting for a new prost release
+# https://github.com/danburkert/prost/issues/329
+prost = { git = "https://github.com/danburkert/prost", rev = "6113789f70b69709820becba4242824b4fb3ffec" }
+prost-derive = { git = "https://github.com/danburkert/prost", rev = "6113789f70b69709820becba4242824b4fb3ffec" }
 
 # Override lmdb-rkv for a necessary bugfix (see https://github.com/mozilla/lmdb-rs/pull/80)
 lmdb-rkv = { git = "https://github.com/mozilla/lmdb-rs", rev = "df1c2f5" }
 
-#aes-gcm = { git = "https://github.com/mobilecoinofficial/AEADs", rev = "d1a8517d3dd867ed9c5794002add67992a42f6aa" }
+# Not-yet-released version that depends on newer crates.
+bulletproofs = { git = "https://github.com/eranrund/bulletproofs", rev = "8a7c9cdd1efafa3ad68cd65676302f925de68373" }

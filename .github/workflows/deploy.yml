@@ -1,0 +1,21 @@
+name: Deploy
+on:
+  push:
+    branches:
+    - "main"
+jobs:
+  build:
+    name: Build & Release
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - uses: "marvinpinto/action-automatic-releases@latest"
+      name: 📍 Deploy
+      run: ./build-using-docker.sh
+      with: 
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        title: "Development Build"
+        automatic_release_tag: "latest"
+        files: out/*

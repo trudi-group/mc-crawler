@@ -28,7 +28,8 @@ RUN apt-get update && apt-get install -y \
     python3 \
     protobuf-compiler\
     libssl-dev \
-    libcurl4-openssl-dev
+    libcurl4-openssl-dev \
+    libssl1.1
 
 # Set SGX environment variables needed by mobilecoin libraries
 ENV IAS_MODE=DEV \

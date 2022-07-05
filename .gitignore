@@ -2,4 +2,4 @@
 /crawl_data
 **/*.rs.bk
 **/*.swp
-
+/out

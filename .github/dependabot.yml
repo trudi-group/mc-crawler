@@ -2,7 +2,12 @@ version: 2
 updates: 
   - package-ecosystem: "cargo"
     directory: "/"
-    schedule: 
-      interval: "weekly"
+    schedule:
+      interval: "monthly"
     ignore:
       - dependency-name: "mc*"
+
+- package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+    interval: "monthly"

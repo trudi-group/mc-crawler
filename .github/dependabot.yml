@@ -7,7 +7,7 @@ updates:
     ignore:
       - dependency-name: "mc*"
 
-- package-ecosystem: "github-actions"
+  - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
     interval: "monthly"

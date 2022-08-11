@@ -6,6 +6,9 @@ updates:
       interval: "monthly"
     ignore:
       - dependency-name: "mc*"
+      # ignore patch updates to all cargo crates
+      - dependency-name: "*"
+        update-types: ["version-update:semver-patch"]
 
   - package-ecosystem: "github-actions"
     directory: "/"

@@ -1,92 +1,22 @@
 use crate::crawl::core_types::*;
 
-use chrono::{DateTime, Utc};
-use log::{info, warn};
-use std::time::Instant;
-use std::{str::FromStr, sync::Arc};
+use std::{collections::HashSet, str::FromStr, sync::Arc};
 
 use grpcio::{ChannelBuilder, EnvBuilder};
 use mc_common::logger;
-use mc_consensus_api::consensus_peer::GetLatestMsgResponse;
-use mc_consensus_api::consensus_peer_grpc::ConsensusPeerApiClient;
-use mc_consensus_api::empty;
+use mc_consensus_api::{
+    consensus_peer::GetLatestMsgResponse, consensus_peer_grpc::ConsensusPeerApiClient,
+};
 use mc_consensus_scp::QuorumSet;
+use mc_crypto_keys::Ed25519Public;
 use mc_peers::ConsensusMsg;
 use mc_util_grpc::ConnectionUriGrpcioChannel;
 use mc_util_serial::deserialize;
 use mc_util_uri::ConsensusClientUri as ClientUri;
 
 impl Crawler {
-    /// This loop controls the entire crawl.
-    /// The crawl ends when there are no more peers in the queue.
-    /// We call get_public_keys_from_quorum_sets in order to get fill the MobcoinFbas with PK instead of hostnames.
-    /// The MobcoinFbas contains all nodes that were found ready to be written as a JSON.
-    pub fn crawl_network(&mut self) -> &mut Self {
-        let start = Instant::now();
-        let now: DateTime<Utc> = Utc::now();
-        info!("Starting crawl..");
-        loop {
-            for peer in self.to_crawl.clone().iter() {
-                self.crawl_node(peer.to_string());
-            }
-            if self.to_crawl.is_empty() {
-                break;
-            }
-        }
-        self.crawl_duration = start.elapsed();
-        self.crawl_time = now.to_rfc3339();
-        info!(
-            "Crawl Summary - Crawled nodes: {}, Crawl Duration {:?}",
-            self.crawled.len(),
-            self.crawl_duration
-        );
-        let nodes_with_pks = self.get_public_keys_from_quorum_sets();
-        self.mobcoin_nodes = nodes_with_pks;
-        self
-    }
-
-    /// 1. Sends the given peer a gRPC.
-    /// 2. Get its QSet.
-    /// 3. Call the handle_discovered_node method on the peer.
-    fn crawl_node(&mut self, peer: String) {
-        info!("Crawling peer: {}", peer);
-        let mut reachable = false;
-        let quorum_set = QuorumSet::empty();
-        // We didn't even send the RPC so no need to take note of the node
-        let rpc_client = match Self::prepare_rpc(peer.clone()) {
-            None => {
-                warn!("Terminating crawl on peer {} .", peer);
-                return;
-            }
-            Some(client) => client,
-        };
-        let rpc_success = match Self::send_rpc(rpc_client) {
-            None => {
-                warn!("Failure sending RPC to {} .", peer);
-                None
-            }
-            Some(reply) => {
-                self.reachable_nodes += 1;
-                reachable = true;
-                Some(reply)
-            }
-        };
-        let qset = match rpc_success {
-            Some(rpc_response) => match Self::deserialise_payload_to_quorum_set(rpc_response) {
-                None => {
-                    warn!("Couldn't deserialise message from {}.", peer);
-                    QuorumSet::empty()
-                }
-                Some(qs) => qs,
-            },
-            None => quorum_set,
-        };
-        let mut crawled = CrawledNode::new(peer.clone(), reachable, qset);
-        self.handle_discovered_node(peer, &mut crawled);
-    }
-
     /// Opens an RPC channel to the peer which can be used for communication later
-    fn prepare_rpc(peer: String) -> Option<ConsensusPeerApiClient> {
+    pub(crate) fn prepare_rpc(peer: String) -> Option<ConsensusPeerApiClient> {
         let env = Arc::new(EnvBuilder::new().build());
         let logger = logger::create_root_logger();
         let node_uri = match ClientUri::from_str(&peer) {
@@ -102,36 +32,69 @@ impl Crawler {
         Some(consensus_client)
     }
 
-    /// The RPC "get_latest_msg" expects an empty protobuf and returns the last ConsensusMsg a node
-    /// sent (see
-    /// https://github.com/mobilecoinfoundation/mobilecoin/blob/master/peers/src/consensus_msg.rs#L20 for the exact definition)
-    fn send_rpc(client: ConsensusPeerApiClient) -> Option<GetLatestMsgResponse> {
-        let response = match client.get_latest_msg(&empty::Empty::default()) {
-            Ok(reply) => Some(reply),
-            Err(_) => {
-                warn!("Error in RPC response.");
-                None
-            }
-        };
-        response
-    }
-
     /// The bytes of the RPC response is deserialised into an McQuorumSet::QuorumSet
-    fn deserialise_payload_to_quorum_set(payload: GetLatestMsgResponse) -> Option<QuorumSet> {
-        let consensus_msg = if payload.get_payload().is_empty() {
+    pub(crate) fn deserialise_payload_to_quorum_set(
+        response: GetLatestMsgResponse,
+    ) -> Option<QuorumSet> {
+        let consensus_msg = if response.get_payload().is_empty() {
             None
         } else {
-            let msg = match deserialize::<ConsensusMsg>(payload.get_payload()) {
-                Ok(cons) => Some(cons),
+            let consensus_msg = match deserialize::<ConsensusMsg>(response.get_payload()) {
+                Ok(cons_msg) => Some(cons_msg),
                 Err(_) => None,
             };
-            msg
+            consensus_msg
         };
-        if let Some(msg) = consensus_msg {
-            Some(msg.scp_msg.quorum_set)
+        if let Some(scp_msg) = consensus_msg {
+            Some(scp_msg.scp_msg.quorum_set)
         } else {
             None
         }
+    }
+
+    /// 0. Add the reporting node to the set of crawled nodes
+    /// 1. Add node to the set to discovered nodes
+    /// 2. Iterate over all members of the Qset and add them to the set of peers that should be crawled
+    pub(crate) fn handle_discovered_node(&mut self, crawled_node: String, node: &mut CrawledNode) {
+        debug!("Handling crawled node {}..", crawled_node);
+        self.to_crawl.remove(&crawled_node);
+        self.crawled.insert(crawled_node);
+        self.mobcoin_nodes.insert(node.clone());
+        for member in node.quorum_set.nodes() {
+            let address = format!("{}{}", "mc://", member.responder_id);
+            if self.crawled.get(&address).is_some() {
+                continue;
+            } else {
+                debug!("Adding {} to crawl queue.", address);
+                self.to_crawl.insert(address.clone());
+            }
+        }
+    }
+
+    /// Looks for each node's PK in the other node's Qsets
+    pub(crate) fn get_public_keys_from_quorum_sets(&self) -> HashSet<CrawledNode> {
+        let mut mobcoin_nodes_with_pks: HashSet<CrawledNode> = HashSet::new();
+        // First get each node's PK
+        for node in self.mobcoin_nodes.iter() {
+            let mut node_now_with_pk = node.clone();
+            // Add the node to set already otherwise it will be left out of the report if 1. the
+            // crawler does not know other nodes 2. it wasn't found in the other qsets 3. sth else
+            // I haven't thought of
+            let responder_id = format!("{}{}:{}", "mc://", node.domain, node.port);
+            for other_node in self.mobcoin_nodes.iter() {
+                if other_node != node {
+                    for member in other_node.quorum_set.nodes() {
+                        let address = format!("{}{}", "mc://", member.responder_id);
+                        if node.public_key == Ed25519Public::default() && responder_id == address {
+                            node_now_with_pk.public_key = member.public_key;
+                            break;
+                        }
+                    }
+                }
+            }
+            mobcoin_nodes_with_pks.insert(node_now_with_pk);
+        }
+        mobcoin_nodes_with_pks
     }
 }
 
@@ -158,5 +121,17 @@ mod tests {
         let msg = GetLatestMsgResponse::new();
         let actual = Crawler::deserialise_payload_to_quorum_set(msg);
         assert!(actual.is_none());
+    }
+
+    #[test]
+    fn record_new_node() {
+        let mut crawler = Crawler::default();
+        let reachable = false;
+        let crawled_node_uri = String::from("mc://test.node:11");
+        let mut crawled_node =
+            CrawledNode::new(crawled_node_uri.clone(), reachable, QuorumSet::empty());
+        crawler.handle_discovered_node(crawled_node_uri.clone(), &mut crawled_node);
+        assert!(crawler.mobcoin_nodes.contains(&crawled_node));
+        assert!(crawler.crawled.contains(&crawled_node_uri));
     }
 }

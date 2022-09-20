@@ -96,51 +96,6 @@ impl Crawler {
             crawl_time: String::default(),
         }
     }
-
-    /// 0. Add the reporting node to the set of crawled nodes
-    /// 1. Add node to the set to discovered nodes
-    /// 2. Iterate over all members of the Qset and add them to the set of peers that should be crawled
-    pub(crate) fn handle_discovered_node(&mut self, crawled_node: String, node: &mut CrawledNode) {
-        debug!("Handling crawled node {}..", crawled_node);
-        self.to_crawl.remove(&crawled_node);
-        self.crawled.insert(crawled_node);
-        self.mobcoin_nodes.insert(node.clone());
-        for member in node.quorum_set.nodes() {
-            let address = format!("{}{}", "mc://", member.responder_id);
-            if self.crawled.get(&address).is_some() {
-                continue;
-            } else {
-                debug!("Adding {} to crawl queue.", address);
-                self.to_crawl.insert(address.clone());
-            }
-        }
-    }
-
-    /// Looks for each node's PK in the other node's Qsets
-    pub(crate) fn get_public_keys_from_quorum_sets(&self) -> HashSet<CrawledNode> {
-        let mut mobcoin_nodes_with_pks: HashSet<CrawledNode> = HashSet::new();
-        // First get each node's PK
-        for node in self.mobcoin_nodes.iter() {
-            let mut node_now_with_pk = node.clone();
-            // Add the node to set already otherwise it will be left out of the report if 1. the
-            // crawler does not know other nodes 2. it wasn't found in the other qsets 3. sth else
-            // I haven't thought of
-            let responder_id = format!("{}{}:{}", "mc://", node.domain, node.port);
-            for other_node in self.mobcoin_nodes.iter() {
-                if other_node != node {
-                    for member in other_node.quorum_set.nodes() {
-                        let address = format!("{}{}", "mc://", member.responder_id);
-                        if node.public_key == Ed25519Public::default() && responder_id == address {
-                            node_now_with_pk.public_key = member.public_key;
-                            break;
-                        }
-                    }
-                }
-            }
-            mobcoin_nodes_with_pks.insert(node_now_with_pk);
-        }
-        mobcoin_nodes_with_pks
-    }
 }
 
 #[cfg(test)]
@@ -163,7 +118,7 @@ mod tests {
         to_crawl.insert(String::from("bar"));
         let expected = Crawler {
             mobcoin_nodes: HashSet::new(),
-            to_crawl: to_crawl,
+            to_crawl,
             crawled: HashSet::new(),
             reachable_nodes: 0,
             crawl_duration: Duration::default(),

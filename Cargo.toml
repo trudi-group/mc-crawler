@@ -1,5 +1,5 @@
 [package]
-version = "0.2.0"
+version = "0.2.1"
 name = "mc-crawler"
 repository = "https://github.com/wiberlin/mc-crawler"
 authors = ["Charmaine Ndolo <Charmaine.Ndolo@hu-berlin.de>"]

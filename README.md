@@ -34,21 +34,12 @@ The most recent data can be retrieved by not passing a timestamp; the oldest wit
 
    - [Rust](https://www.rust-lang.org)
         - Install: https://www.rust-lang.org/tools/install
-   - Rust's `nightly-2021-03-25` compiler which will be downloaded and installed automatically
+   - Rust's `nightly-2022-04-29` compiler which will be downloaded and installed automatically
    - Protobuf compiler `protoc` which can be built from source or installed using a package manager or , e.g.
-   
+
         ``` apt install -y protobuf-compiler ``` on Ubuntu
 
-  - The `mobilecoinofficial/rust-mbedtls` crate, which this project indirectly depends on, does not currently support gcc 11 (see [this issue](https://github.com/mobilecoinofficial/rust-mbedtls/issues/6)). Release builds, therefore, fail if the latest gcc is used for compilation.
-  
-    This can be fixed without downgrading the system-wide gcc by compiling the project with an older version of gcc,
-       e.g. `gcc-10`. One possibility of doing so is via the CMake environment variables `CC` and `CXX` 
-       like below (in the project directory):
-    ```
-    export CC=/usr/bin/gcc-10 CXX=/usr/bin/g++-10
-    ``` 
-
-## 2. (Optional but recommended) Environment Variables
+## 2. Environment Variables
 Some of the crates used in this library need the Intel SGX environment variables
 `SGX_MODE` and `IAS_MODE`.
 
@@ -64,6 +55,7 @@ a call to a cargo subcommand is made.
 Continue to the [section on running the crawler](#run).
 
 ## 3. Crawling the Network
+
 ### Build
 `SGX_MODE=SW IAS_MODE=DEV cargo build --release`
 
@@ -89,7 +81,7 @@ Refer to its documentation for installation instructions before proceeding.
 
 Below are some example commands: (see `target/release/fbas_analyzer -h` for more analysis options)
 
-### Find all minimal quorums, minimal blocking sets and minimal splitting sets and output metrics about the sizes of the node sets. 
+### Find all minimal quorums, minimal blocking sets and minimal splitting sets and output metrics about the sizes of the node sets.
 `target/release/fbas_analyzer -adp mobilecoin_nodes_completed_manually_2021-08-02.json`
 
 ### Find the same sets as above, but merge by organisations

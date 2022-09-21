@@ -1,0 +1,2 @@
+// MobileCoin WorldWide testnet node
+mc://peer1.test.mobilecoin.com:443

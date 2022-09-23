@@ -2,7 +2,7 @@ name: Code Coverage
 
 on:
   push:
-    branches: 
+    branches:
       - main
   pull_request:
     branches:
@@ -12,8 +12,6 @@ env:
   CARGO_TERM_COLOR: always
   SGX_MODE: SW
   IAS_MODE: DEV
-  CC: gcc-10
-  CXX: g++-10
 
 jobs:
   build:

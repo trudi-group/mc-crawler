@@ -997,6 +997,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "grpcio"
+version = "0.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1132252c65fd51bd7d1dc7920e2931201fc3a2c9e3fbce6c27f8762e7a2ff3ed"
+dependencies = [
+ "futures-executor",
+ "futures-util",
+ "grpcio-sys",
+ "libc",
+ "log",
+ "parking_lot 0.11.2",
+ "protobuf",
+]
+
+[[package]]
 name = "grpcio-compiler"
 version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1526,7 +1541,7 @@ dependencies = [
  "cargo-emit",
  "digest",
  "futures",
- "grpcio",
+ "grpcio 0.10.3",
  "mc-attest-ake",
  "mc-attest-enclave-api",
  "mc-crypto-keys",
@@ -1646,7 +1661,7 @@ dependencies = [
  "aes-gcm",
  "cookie",
  "displaydoc",
- "grpcio",
+ "grpcio 0.10.3",
  "mc-attest-ake",
  "mc-attest-api",
  "mc-attest-core",
@@ -1672,7 +1687,7 @@ source = "git+https://github.com/mobilecoinfoundation/mobilecoin?tag=v2.0.2#0f09
 dependencies = [
  "cargo-emit",
  "futures",
- "grpcio",
+ "grpcio 0.10.3",
  "mc-api",
  "mc-attest-api",
  "mc-ledger-db",
@@ -1730,7 +1745,7 @@ dependencies = [
  "base64",
  "chrono",
  "env_logger 0.9.1",
- "grpcio",
+ "grpcio 0.11.0",
  "log",
  "maxminddb",
  "mc-common",
@@ -1944,7 +1959,7 @@ source = "git+https://github.com/mobilecoinfoundation/mobilecoin?tag=v2.0.2#0f09
 dependencies = [
  "crossbeam-channel",
  "displaydoc",
- "grpcio",
+ "grpcio 0.10.3",
  "mc-attest-api",
  "mc-attest-core",
  "mc-attest-enclave-api",
@@ -2106,7 +2121,7 @@ dependencies = [
  "cookie",
  "displaydoc",
  "futures",
- "grpcio",
+ "grpcio 0.10.3",
  "hex",
  "hex_fmt",
  "hmac",
@@ -2160,7 +2175,7 @@ version = "2.0.0"
 source = "git+https://github.com/mobilecoinfoundation/mobilecoin?tag=v2.0.2#0f09862109fa8c3749012ffed355eb25eed775d6"
 dependencies = [
  "chrono",
- "grpcio",
+ "grpcio 0.10.3",
  "lazy_static",
  "mc-common",
  "prometheus",

@@ -160,8 +160,8 @@ mod tests {
             ],
         );
         let validators = vec![
-            base64::encode(node_0.public_key),
-            base64::encode(node_1.public_key),
+            STANDARD.encode(node_0.public_key),
+            STANDARD.encode(node_1.public_key),
         ];
         let inner_quorum_sets = vec![];
         let expected = QuorumSet {
@@ -200,21 +200,21 @@ mod tests {
             ],
         );
         let validators = vec![
-            base64::encode(node_0.public_key),
-            base64::encode(node_1.public_key),
+            STANDARD.encode(node_0.public_key),
+            STANDARD.encode(node_1.public_key),
         ];
         let inner_quorum_sets = vec![
             QuorumSet {
                 threshold: 2,
                 validators: vec![
-                    base64::encode(node_2.public_key),
-                    base64::encode(node_3.public_key),
+                    STANDARD.encode(node_2.public_key),
+                    STANDARD.encode(node_3.public_key),
                 ],
                 inner_quorum_sets: Vec::default(),
             },
             QuorumSet {
                 threshold: 1,
-                validators: vec![base64::encode(node_4.public_key)],
+                validators: vec![STANDARD.encode(node_4.public_key)],
                 inner_quorum_sets: Vec::default(),
             },
         ];

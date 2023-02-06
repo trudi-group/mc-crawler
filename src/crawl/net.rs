@@ -20,7 +20,7 @@ impl Crawler {
         info!("Starting crawl..");
         loop {
             for peer in self.to_crawl.clone().iter() {
-                self.crawl_node(peer.to_string());
+                self.crawl_node(peer);
             }
             if self.to_crawl.is_empty() {
                 break;
@@ -41,40 +41,29 @@ impl Crawler {
     /// 1. Sends the given peer a gRPC.
     /// 2. Get its QSet.
     /// 3. Call the handle_discovered_node method on the peer.
-    fn crawl_node(&mut self, peer: String) {
+    fn crawl_node(&mut self, peer: &String) {
         info!("Crawling peer: {}", peer);
         let mut reachable = false;
-        let quorum_set = QuorumSet::empty();
-        // We didn't even send the RPC so no need to take note of the node
-        let rpc_client = match Self::prepare_rpc(peer.clone()) {
-            None => {
-                warn!("Terminating crawl on peer {} .", peer);
-                return;
-            }
-            Some(client) => client,
-        };
-        let rpc_success = match Self::send_rpc(rpc_client) {
-            None => {
-                warn!("Failure sending RPC to {} .", peer);
-                None
-            }
-            Some(reply) => {
+        let quorum_set = if let Some(client) = Self::prepare_rpc(peer.clone()) {
+            if let Some(rpc_reply) = Self::send_rpc(client) {
                 self.reachable_nodes += 1;
                 reachable = true;
-                Some(reply)
-            }
-        };
-        let qset = match rpc_success {
-            Some(rpc_response) => match Self::deserialise_payload_to_quorum_set(rpc_response) {
-                None => {
+                if let Some(qs) = Self::deserialise_payload_to_quorum_set(rpc_reply) {
+                    qs
+                } else {
                     warn!("Couldn't deserialise message from {}.", peer);
                     QuorumSet::empty()
                 }
-                Some(qs) => qs,
-            },
-            None => quorum_set,
+            } else {
+                warn!("Failure sending RPC to {} .", peer);
+                QuorumSet::empty()
+            }
+        } else {
+            // We didn't even send the RPC so no need to take note of the node
+            warn!("Terminating crawl on peer {} .", peer);
+            return;
         };
-        let mut crawled = CrawledNode::new(peer.clone(), reachable, qset);
+        let mut crawled = CrawledNode::new(peer.clone(), reachable, quorum_set);
         self.handle_discovered_node(peer, &mut crawled);
     }
 
@@ -104,5 +93,6 @@ mod tests {
         assert!(crawler.mobcoin_nodes.is_empty());
         assert!(crawler.to_crawl.is_empty());
         assert_eq!(crawler.reachable_nodes, 0);
+        assert_eq!(crawler.crawled.len(), 0);
     }
 }

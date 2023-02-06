@@ -7,7 +7,7 @@ use mc_common::logger;
 use mc_consensus_api::{
     consensus_peer::GetLatestMsgResponse, consensus_peer_grpc::ConsensusPeerApiClient,
 };
-use mc_consensus_scp::QuorumSet;
+use mc_consensus_scp::QuorumSet as McQuorumSet;
 use mc_crypto_keys::Ed25519Public;
 use mc_peers::ConsensusMsg;
 use mc_util_grpc::ConnectionUriGrpcioChannel;
@@ -35,7 +35,7 @@ impl Crawler {
     /// The bytes of the RPC response is deserialised into an McQuorumSet::QuorumSet
     pub(crate) fn deserialise_payload_to_quorum_set(
         response: GetLatestMsgResponse,
-    ) -> Option<QuorumSet> {
+    ) -> Option<McQuorumSet> {
         let consensus_msg = if response.get_payload().is_empty() {
             None
         } else {
@@ -55,11 +55,11 @@ impl Crawler {
     /// 0. Add the reporting node to the set of crawled nodes
     /// 1. Add node to the set to discovered nodes
     /// 2. Iterate over all members of the Qset and add them to the set of peers that should be crawled
-    pub(crate) fn handle_discovered_node(&mut self, crawled_node: String, node: &mut CrawledNode) {
+    pub(crate) fn handle_discovered_node(&mut self, crawled_node: &String, node: &mut CrawledNode) {
         debug!("Handling crawled node {}..", crawled_node);
-        self.to_crawl.remove(&crawled_node);
-        self.crawled.insert(crawled_node);
-        self.mobcoin_nodes.insert(node.clone());
+        self.to_crawl.remove(crawled_node);
+        self.crawled.insert(crawled_node.to_owned());
+        self.mobcoin_nodes.insert(node.to_owned());
         for member in node.quorum_set.nodes() {
             let address = format!("{}{}", "mc://", member.responder_id);
             if self.crawled.get(&address).is_some() {
@@ -101,6 +101,8 @@ impl Crawler {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use mc_consensus_scp::test_utils::test_node_id;
+    use mc_consensus_scp::QuorumSetMember;
 
     #[test]
     fn invalid_peer_address_to_cons_peer() {
@@ -129,9 +131,80 @@ mod tests {
         let reachable = false;
         let crawled_node_uri = String::from("mc://test.node:11");
         let mut crawled_node =
-            CrawledNode::new(crawled_node_uri.clone(), reachable, QuorumSet::empty());
-        crawler.handle_discovered_node(crawled_node_uri.clone(), &mut crawled_node);
+            CrawledNode::new(crawled_node_uri.clone(), reachable, McQuorumSet::empty());
+        crawler.handle_discovered_node(&crawled_node_uri, &mut crawled_node);
         assert!(crawler.mobcoin_nodes.contains(&crawled_node));
         assert!(crawler.crawled.contains(&crawled_node_uri));
+    }
+
+    #[test]
+    fn pks_from_qsets() {
+        // TODO: Don't use default public key
+        let node_0_id = test_node_id(0);
+        let node_1_id = test_node_id(1);
+        let node_0_pk = Ed25519Public::default();
+        let node_1_pk = Ed25519Public::default();
+        let mut crawler = Crawler::default();
+        crawler.mobcoin_nodes = HashSet::from([
+            CrawledNode {
+                public_key: node_1_pk,
+                domain: "mc://test.node0:11".to_string(),
+                port: 5678,
+                quorum_set: McQuorumSet::new(
+                    2,
+                    vec![
+                        QuorumSetMember::Node(node_0_id.clone()),
+                        QuorumSetMember::Node(node_1_id.clone()),
+                    ],
+                ),
+                online: false,
+            },
+            CrawledNode {
+                public_key: node_0_pk,
+                domain: "mc://test.node1:11".to_string(),
+                port: 8765,
+                quorum_set: McQuorumSet::new(
+                    1,
+                    vec![
+                        QuorumSetMember::Node(node_0_id.clone()),
+                        QuorumSetMember::Node(node_1_id.clone()),
+                    ],
+                ),
+                online: false,
+            },
+        ]);
+        let actual = crawler.get_public_keys_from_quorum_sets();
+        let expected = HashSet::from([
+            CrawledNode {
+                public_key: Ed25519Public::default(),
+                domain: "mc://test.node0:11".to_string(),
+                port: 5678,
+                online: false,
+                quorum_set: McQuorumSet::new(
+                    2,
+                    vec![
+                        QuorumSetMember::Node(node_0_id.clone()),
+                        QuorumSetMember::Node(node_1_id.clone()),
+                    ],
+                ),
+            },
+            CrawledNode {
+                public_key: Ed25519Public::default(),
+                domain: "mc://test.node1:11".to_string(),
+                port: 8765,
+                online: false,
+                quorum_set: McQuorumSet::new(
+                    1,
+                    vec![
+                        QuorumSetMember::Node(node_0_id.clone()),
+                        QuorumSetMember::Node(node_1_id.clone()),
+                    ],
+                ),
+            },
+        ]);
+        assert_eq!(actual.len(), expected.len());
+        for node in expected {
+            actual.contains(&node);
+        }
     }
 }

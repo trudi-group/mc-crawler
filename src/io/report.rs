@@ -1,6 +1,7 @@
 use crate::crawl::{CrawledNode, Crawler};
 use crate::stats::{Database, DbReader};
 
+use base64::{engine::general_purpose::STANDARD, Engine};
 use mc_consensus_scp::{QuorumSet as McQuorumSet, QuorumSetMember};
 use mc_crypto_keys::Ed25519Public;
 use serde::{Serialize, Serializer};
@@ -100,7 +101,7 @@ impl QuorumSet {
         for member in mc_quorum_set.members.iter() {
             match member {
                 QuorumSetMember::Node(node) => {
-                    validators.push(base64::encode(node.public_key));
+                    validators.push(STANDARD.encode(node.public_key));
                 }
                 QuorumSetMember::InnerSet(qs) => {
                     inner_quorum_sets.push(Self::from_mc_quorum_set(qs.clone()));
@@ -139,7 +140,7 @@ where
     T: AsRef<[u8]>,
     S: Serializer,
 {
-    serializer.serialize_str(&base64::encode(&buffer))
+    serializer.serialize_str(&STANDARD.encode(&buffer))
 }
 
 #[cfg(test)]

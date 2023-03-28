@@ -9,13 +9,13 @@ use mc_crypto_keys::Ed25519Public;
 /// A CrawledNode is a MobileCoin network node that we have learned of during the crawl. The
 /// Crawler keeps a tally of these during a crawl and each will later be transformed to a MobCoinNode.
 #[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]
-pub(crate) struct CrawledNode {
+pub struct CrawledNode {
     pub(crate) public_key: Ed25519Public,
     pub(crate) domain: String,
     pub(crate) port: u16,
     pub(crate) quorum_set: McQuorumSet,
     pub(crate) online: bool,
-    pub(crate) latest_block: u64,
+    pub latest_block: u64,
     pub(crate) network_block_version: u32,
 }
 
@@ -23,7 +23,7 @@ pub(crate) struct CrawledNode {
 #[derive(Clone, Debug, PartialEq, Eq, Default)]
 pub struct Crawler {
     /// A HashSet of discovered nodes
-    pub(crate) mobcoin_nodes: HashSet<CrawledNode>,
+    pub mobcoin_nodes: HashSet<CrawledNode>,
     /// A HashSet of nodes to be crawled
     pub(crate) to_crawl: HashSet<String>,
     /// A HashSet of nodes that have been crawled

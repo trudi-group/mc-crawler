@@ -21,6 +21,8 @@ pub struct MobcoinNode {
     #[serde(skip_serializing_if = "String::is_empty")]
     pub isp: String,
     pub geo_data: GeoData,
+    pub latest_block: u64,
+    pub ledger_version: u32,											// is that the same as network block version?
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Default, Serialize)]
@@ -130,6 +132,8 @@ impl MobcoinNode {
             quorum_set,
             isp,
             geo_data: GeoData { country_name },
+            latest_block: crawled_node.latest_block,
+            ledger_version: crawled_node.network_block_version,
         }
     }
 }

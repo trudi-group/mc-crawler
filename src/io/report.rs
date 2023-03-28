@@ -5,8 +5,8 @@ use base64::{engine::general_purpose::STANDARD, Engine};
 use mc_consensus_scp::{QuorumSet as McQuorumSet, QuorumSetMember};
 use mc_crypto_keys::Ed25519Public;
 use serde::{Serialize, Serializer};
-use std::time::Duration;
 use std::collections::HashMap;
+use std::time::Duration;
 
 #[derive(Clone, Debug, PartialEq, Eq, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -23,7 +23,7 @@ pub struct MobcoinNode {
     pub isp: String,
     pub geo_data: GeoData,
     pub latest_block: u64,
-    pub ledger_version: u32,											// is that the same as network block version?
+    pub ledger_version: u32, // is that the same as network block version?
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Default, Serialize)]
@@ -60,16 +60,16 @@ pub struct CrawlReport {
     /// The MobileCoin Nodes
     pub node_info: NodeInfo,
     pub nodes: MobcoinFbas,
-    pub latest_block: LatestBlockInfo
+    pub latest_block: LatestBlockInfo,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Default, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub enum LatestBlockInfo {
-	 #[default]
+    #[default]
     None,
     Consensus(u64),
-    Err(String)
+    Err(String),
 }
 
 /// Holds (general) data about the crawl and is included in the CrawlReport.
@@ -92,26 +92,29 @@ impl MobcoinFbas {
 }
 
 impl CrawlReport {
-    fn determine_network_block_height (crawler: &Crawler) -> LatestBlockInfo {
-		fn find_key_for_value(map: &HashMap<u64, u64>, value: u64) -> Option<u64> {
-			map.iter().find_map(|(key, val)| if *val == value { Some(*key) } else { None })
-		}
-		let mut map = HashMap::<u64,u64>::new();
-		for node in &crawler.mobcoin_nodes {	
-			*map.entry(node.latest_block).or_insert(0) += 1;
-		}
-		if map.is_empty() { return LatestBlockInfo::Err("no nodes found.".to_string()); }
-		
-		let mut amount:  Vec<u64> = map.values().cloned().collect::<Vec<u64>>();
-		amount.sort_unstable_by(|a, b| b.cmp(a)); // reverse sorting
-		
-		if amount.len() > 1 &&
-			amount[0] == amount[1]
-			{ return LatestBlockInfo::Err("nodes did not consent to a latest block.".to_string()); }
-		
-		LatestBlockInfo::Consensus(find_key_for_value(&map, amount[0]).unwrap())		
-	}
-	pub fn create_crawl_report(fbas: MobcoinFbas, crawler: &Crawler) -> Self {
+    fn determine_network_block_height(crawler: &Crawler) -> LatestBlockInfo {
+        fn find_key_for_value(map: &HashMap<u64, u64>, value: u64) -> Option<u64> {
+            map.iter()
+                .find_map(|(key, val)| if *val == value { Some(*key) } else { None })
+        }
+        let mut map = HashMap::<u64, u64>::new();
+        for node in &crawler.mobcoin_nodes {
+            *map.entry(node.latest_block).or_insert(0) += 1;
+        }
+        if map.is_empty() {
+            return LatestBlockInfo::Err("no nodes found.".to_string());
+        }
+
+        let mut amount: Vec<u64> = map.values().cloned().collect::<Vec<u64>>();
+        amount.sort_unstable_by(|a, b| b.cmp(a)); // reverse sorting
+
+        if amount.len() > 1 && amount[0] == amount[1] {
+            return LatestBlockInfo::Err("nodes did not consent to a latest block.".to_string());
+        }
+
+        LatestBlockInfo::Consensus(find_key_for_value(&map, amount[0]).unwrap())
+    }
+    pub fn create_crawl_report(fbas: MobcoinFbas, crawler: &Crawler) -> Self {
         Self {
             timestamp: crawler.crawl_time.clone(),
             duration: crawler.crawl_duration,
@@ -120,7 +123,7 @@ impl CrawlReport {
                 reachable_nodes: crawler.reachable_nodes,
             },
             nodes: fbas,
-            latest_block: CrawlReport::determine_network_block_height(crawler)
+            latest_block: CrawlReport::determine_network_block_height(crawler),
         }
     }
 }

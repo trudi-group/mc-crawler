@@ -115,9 +115,7 @@ pub fn main() {
     let bs_peers = read_bs_peers(args.nodes_path.as_ref());
     let mut crawler = crawl::Crawler::new(bs_peers);
     crawler.crawl_network();
-    
-	
-    
+
     if args.fbas || args.complete {
         let output_dir = create_output_dir(args.output.as_ref());
         if output_dir.is_some() {

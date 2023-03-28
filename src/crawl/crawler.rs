@@ -5,7 +5,8 @@ use std::{collections::HashSet, str::FromStr, sync::Arc};
 use grpcio::{ChannelBuilder, EnvBuilder};
 use mc_common::logger;
 use mc_consensus_api::{
-    consensus_peer::GetLatestMsgResponse, consensus_peer_grpc::ConsensusPeerApiClient, consensus_common_grpc::BlockchainApiClient, 
+    consensus_common_grpc::BlockchainApiClient, consensus_peer::GetLatestMsgResponse,
+    consensus_peer_grpc::ConsensusPeerApiClient,
 };
 use mc_consensus_scp::QuorumSet as McQuorumSet;
 use mc_crypto_keys::Ed25519Public;
@@ -16,7 +17,9 @@ use mc_util_uri::ConsensusClientUri as ClientUri;
 
 impl Crawler {
     /// Opens an RPC channel to the peer which can be used for communication later
-    pub(crate) fn prepare_rpc(peer: String) -> (Option<ConsensusPeerApiClient>, Option<BlockchainApiClient>) {
+    pub(crate) fn prepare_rpc(
+        peer: String,
+    ) -> (Option<ConsensusPeerApiClient>, Option<BlockchainApiClient>) {
         let env = Arc::new(EnvBuilder::new().build());
         let logger = logger::create_root_logger();
         let node_uri = match ClientUri::from_str(&peer) {
@@ -28,8 +31,8 @@ impl Crawler {
         };
         let ch = ChannelBuilder::default_channel_builder(env)
             .connect_to_uri(&node_uri.unwrap(), &logger);
-        let consensus_client  = ConsensusPeerApiClient::new(ch.clone());// consensus_peer.ConsensusPeerAPI.GetLatestMsg
-		let blockchain_client = <BlockchainApiClient>::new(ch);			// consensus_common.BlockchainAPI.GetLastBlockInfo
+        let consensus_client = ConsensusPeerApiClient::new(ch.clone()); // consensus_peer.ConsensusPeerAPI.GetLatestMsg
+        let blockchain_client = <BlockchainApiClient>::new(ch); // consensus_common.BlockchainAPI.GetLastBlockInfo
         (Some(consensus_client), Some(blockchain_client))
     }
 

@@ -38,7 +38,13 @@ pub struct Crawler {
 
 impl CrawledNode {
     /// Create a new CrawledNode using its hostname, connectivity status and Qset.
-    pub(crate) fn new(url: String, online: bool, quorum_set: McQuorumSet, latest_block: u64, network_block_version: u32) -> Self {
+    pub(crate) fn new(
+        url: String,
+        online: bool,
+        quorum_set: McQuorumSet,
+        latest_block: u64,
+        network_block_version: u32,
+    ) -> Self {
         let (domain, port) = Self::fragment_mc_url(url);
         CrawledNode {
             public_key: Ed25519Public::default(),

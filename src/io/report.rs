@@ -6,6 +6,8 @@ use mc_consensus_scp::{QuorumSet as McQuorumSet, QuorumSetMember};
 use mc_crypto_keys::Ed25519Public;
 use serde::{Serialize, Serializer};
 use std::collections::HashMap;
+#[allow(unused_imports)] // necessary for tests
+use std::collections::HashSet;
 use std::time::Duration;
 
 #[derive(Clone, Debug, PartialEq, Eq, Default, Serialize)]
@@ -23,7 +25,7 @@ pub struct MobcoinNode {
     pub isp: String,
     pub geo_data: GeoData,
     pub latest_block: u64,
-    pub ledger_version: u32, // is that the same as network block version?
+    pub ledger_version: u32,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Default, Serialize)]
@@ -93,10 +95,12 @@ impl MobcoinFbas {
 
 impl CrawlReport {
     fn determine_network_block_height(crawler: &Crawler) -> LatestBlockInfo {
+        // reverse search in a hash map (value -> key)
         fn find_key_for_value(map: &HashMap<u64, u64>, value: u64) -> Option<u64> {
             map.iter()
                 .find_map(|(key, val)| if *val == value { Some(*key) } else { None })
         }
+        // Map<latest_block, count_of_nodes which_proclaim_it>
         let mut map = HashMap::<u64, u64>::new();
         for node in &crawler.mobcoin_nodes {
             *map.entry(node.latest_block).or_insert(0) += 1;
@@ -108,8 +112,47 @@ impl CrawlReport {
         let mut amount: Vec<u64> = map.values().cloned().collect::<Vec<u64>>();
         amount.sort_unstable_by(|a, b| b.cmp(a)); // reverse sorting
 
+        // 2 different block lengths have the same number of »supporter nodes«
+        // actually no decision possible; let's rely on our trusted bootstrap nodes
         if amount.len() > 1 && amount[0] == amount[1] {
-            return LatestBlockInfo::Err("nodes did not consent to a latest block.".to_string());
+            let bootstrap_peers = crawler
+                .clone()
+                .bootstrap_peers
+                .into_iter()
+                .collect::<Vec<String>>();
+
+            let mut trusted_block = None;
+            for node in &crawler.mobcoin_nodes {
+                for bsp in &bootstrap_peers {
+                    let (domain, port) = CrawledNode::fragment_mc_url(bsp.clone());
+                    // is this node one of our trusted ones?
+                    if (node.domain == domain) && (node.port == port) {
+                        // Bäääm!
+                        match trusted_block {
+                            Some(trusted_block) => {
+                                if trusted_block != node.latest_block {
+                                    return LatestBlockInfo::Err(
+                                        "nodes did not consent to a latest block because trusted nodes are discordant.".to_string(),
+                                    );
+                                }
+                            }
+                            _ => {
+                                trusted_block = Some(node.latest_block);
+                            }
+                        };
+                    }
+                }
+            }
+            match trusted_block {
+                Some(trusted_block) => {
+                    return LatestBlockInfo::Consensus(trusted_block);
+                }
+                _ => {
+                    return LatestBlockInfo::Err(
+                        "nodes did not consent to a latest block because a unexpected error occured.".to_string(),
+                    );
+                }
+            };
         }
 
         LatestBlockInfo::Consensus(find_key_for_value(&map, amount[0]).unwrap())
@@ -282,6 +325,8 @@ mod tests {
                 ],
             ),
             online: false,
+            latest_block: 4242,
+            network_block_version: 42,
         };
         let quorum_set = QuorumSet::from_mc_quorum_set(crawled_node.quorum_set.clone());
         let expected = MobcoinNode {
@@ -294,8 +339,84 @@ mod tests {
             geo_data: GeoData {
                 country_name: String::from("United States"),
             },
+            latest_block: 4242,
+            ledger_version: 42,
         };
         let actual = MobcoinNode::from_crawled_node(crawled_node);
         assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn test_determine_network_block_height_failure() {
+        let to_crawl: HashSet<String> = vec![
+            "mc://node1.trusted.com:123".to_string(),
+            "mc://node2.trusted.com:123".to_string(),
+        ]
+        .into_iter()
+        .collect();
+        let mut cnl = HashSet::<CrawledNode>::new();
+        for i in 1..3 {
+            let crawled_node = CrawledNode {
+                public_key: Ed25519Public::default(),
+                domain: format!("node{}.trusted.com", i),
+                port: 123,
+                quorum_set: McQuorumSet::new(0, vec![]),
+                online: false,
+                latest_block: i,
+                network_block_version: 42,
+            };
+            cnl.insert(crawled_node);
+        }
+        let crawler = Crawler {
+            bootstrap_peers: to_crawl.clone(),
+            mobcoin_nodes: cnl.clone(),
+            to_crawl,
+            crawled: HashSet::new(),
+            reachable_nodes: 2,
+            crawl_duration: Duration::default(),
+            crawl_time: String::default(),
+        };
+        let result = CrawlReport::determine_network_block_height(&crawler);
+        assert!(
+            matches!(result, LatestBlockInfo::Err(_)),
+            "result is type of {:#?} because of {:#?}.",
+            result,
+            cnl
+        );
+    }
+    #[test]
+    fn test_determine_network_block_height() {
+        let to_crawl: HashSet<String> = vec!["mc://node1.coins.com:123".to_string()]
+            .into_iter()
+            .collect();
+        let mut cnl = HashSet::<CrawledNode>::new();
+        for i in 1..4 {
+            let crawled_node = CrawledNode {
+                public_key: Ed25519Public::default(),
+                domain: format!("node{}.coins.com", i),
+                port: 123,
+                quorum_set: McQuorumSet::new(0, vec![]),
+                online: false,
+                latest_block: i,
+                network_block_version: 42,
+            };
+            cnl.insert(crawled_node);
+        }
+        let crawler = Crawler {
+            bootstrap_peers: to_crawl.clone(),
+            mobcoin_nodes: cnl.clone(),
+            to_crawl,
+            crawled: HashSet::new(),
+            reachable_nodes: 2,
+            crawl_duration: Duration::default(),
+            crawl_time: String::default(),
+        };
+        let result = CrawlReport::determine_network_block_height(&crawler);
+        assert!(
+            matches!(result, LatestBlockInfo::Consensus(_)),
+            "result is type of {:#?} because of {:#?}.",
+            result,
+            cnl
+        );
     }
 }

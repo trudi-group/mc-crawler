@@ -111,15 +111,17 @@ mod tests {
     #[test]
     fn invalid_peer_address_to_cons_peer() {
         let peer = "localhost:443";
-        let actual = Crawler::prepare_rpc(String::from(peer));
-        assert!(actual.is_none());
+        let (rpc1, rpc2) = Crawler::prepare_rpc(String::from(peer));
+        assert!(rpc1.is_none());
+        assert!(rpc2.is_none());
     }
 
     #[test]
     fn correct_peer_address_to_cons_peer() {
         let peer = "mc://localhost:443";
-        let actual = Crawler::prepare_rpc(String::from(peer));
-        assert!(actual.is_some());
+        let (rpc1, rpc2) = Crawler::prepare_rpc(String::from(peer));
+        assert!(rpc1.is_some());
+        assert!(rpc2.is_some());
     }
 
     #[test]
@@ -134,8 +136,13 @@ mod tests {
         let mut crawler = Crawler::default();
         let reachable = false;
         let crawled_node_uri = String::from("mc://test.node:11");
-        let mut crawled_node =
-            CrawledNode::new(crawled_node_uri.clone(), reachable, McQuorumSet::empty());
+        let mut crawled_node = CrawledNode::new(
+            crawled_node_uri.clone(),
+            reachable,
+            McQuorumSet::empty(),
+            4242,
+            42,
+        );
         crawler.handle_discovered_node(&crawled_node_uri, &mut crawled_node);
         assert!(crawler.mobcoin_nodes.contains(&crawled_node));
         assert!(crawler.crawled.contains(&crawled_node_uri));
@@ -162,6 +169,8 @@ mod tests {
                     ],
                 ),
                 online: false,
+                latest_block: 4242,
+                network_block_version: 42,
             },
             CrawledNode {
                 public_key: node_0_pk,
@@ -175,6 +184,8 @@ mod tests {
                     ],
                 ),
                 online: false,
+                latest_block: 4242,
+                network_block_version: 42,
             },
         ]);
         let actual = crawler.get_public_keys_from_quorum_sets();
@@ -191,6 +202,8 @@ mod tests {
                         QuorumSetMember::Node(node_1_id.clone()),
                     ],
                 ),
+                latest_block: 4242,
+                network_block_version: 42,
             },
             CrawledNode {
                 public_key: Ed25519Public::default(),
@@ -204,6 +217,8 @@ mod tests {
                         QuorumSetMember::Node(node_1_id.clone()),
                     ],
                 ),
+                latest_block: 4242,
+                network_block_version: 42,
             },
         ]);
         assert_eq!(actual.len(), expected.len());

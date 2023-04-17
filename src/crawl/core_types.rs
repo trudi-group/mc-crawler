@@ -22,6 +22,8 @@ pub struct CrawledNode {
 /// The Crawler object steers a crawl.
 #[derive(Clone, Debug, PartialEq, Eq, Default)]
 pub struct Crawler {
+    /// initial set of bootstrap peers
+    pub bootstrap_peers: HashSet<String>,
     /// A HashSet of discovered nodes
     pub mobcoin_nodes: HashSet<CrawledNode>,
     /// A HashSet of nodes to be crawled
@@ -58,7 +60,7 @@ impl CrawledNode {
     }
 
     /// Return 0.0.0.0 as an address if not resolvable otherwise the stats functions would return one own's geolocation
-    fn fragment_mc_url(url: String) -> (String, u16) {
+    pub fn fragment_mc_url(url: String) -> (String, u16) {
         let url = Url::parse(&url).expect("Failed to parse into Url");
         let domain = url.domain();
         let port = url.port();
@@ -97,6 +99,7 @@ impl Crawler {
             to_crawl.insert(peer);
         }
         Crawler {
+            bootstrap_peers: to_crawl.clone(),
             mobcoin_nodes: HashSet::new(),
             to_crawl,
             crawled: HashSet::new(),
@@ -126,6 +129,7 @@ mod tests {
         to_crawl.insert(String::from("foo"));
         to_crawl.insert(String::from("bar"));
         let expected = Crawler {
+            bootstrap_peers: bs_peers.clone().into_iter().collect::<HashSet<String>>(),
             mobcoin_nodes: HashSet::new(),
             to_crawl,
             crawled: HashSet::new(),

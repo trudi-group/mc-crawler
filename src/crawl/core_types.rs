@@ -17,6 +17,7 @@ pub struct CrawledNode {
     pub(crate) online: bool,
     pub latest_block: u64,
     pub(crate) network_block_version: u32,
+    pub minimum_fee: u64,
 }
 
 /// The Crawler object steers a crawl.
@@ -46,6 +47,7 @@ impl CrawledNode {
         quorum_set: McQuorumSet,
         latest_block: u64,
         network_block_version: u32,
+        minimum_fee: u64,
     ) -> Self {
         let (domain, port) = Self::fragment_mc_url(url);
         CrawledNode {
@@ -56,6 +58,7 @@ impl CrawledNode {
             online,
             latest_block,
             network_block_version,
+            minimum_fee,
         }
     }
 

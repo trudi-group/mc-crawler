@@ -26,6 +26,7 @@ pub struct MobcoinNode {
     pub geo_data: GeoData,
     pub latest_block: u64,
     pub ledger_version: u32,
+    pub minimum_fee: u64,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Default, Serialize)]
@@ -63,6 +64,7 @@ pub struct CrawlReport {
     pub node_info: NodeInfo,
     pub nodes: MobcoinFbas,
     pub latest_block: LatestBlockInfo,
+    pub minimum_fee: u64,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Default, Serialize)]
@@ -94,6 +96,23 @@ impl MobcoinFbas {
 }
 
 impl CrawlReport {
+    fn determine_minimum_fee(crawler: &Crawler) -> u64 {
+        let mut min_fee = None;
+        for node in &crawler.mobcoin_nodes {
+            match min_fee {
+                None => {
+                    min_fee = Some(node.minimum_fee);
+                }
+                Some(mf) => {
+                    if mf != node.minimum_fee {
+                        return 0;
+                    }
+                }
+            }
+        }
+        min_fee.unwrap_or(0)
+    }
+
     fn determine_network_block_height(crawler: &Crawler) -> LatestBlockInfo {
         // reverse search in a hash map (value -> key)
         fn find_key_for_value(map: &HashMap<u64, u64>, value: u64) -> Option<u64> {
@@ -154,7 +173,6 @@ impl CrawlReport {
                 }
             };
         }
-
         LatestBlockInfo::Consensus(find_key_for_value(&map, amount[0]).unwrap())
     }
     pub fn create_crawl_report(fbas: MobcoinFbas, crawler: &Crawler) -> Self {
@@ -167,6 +185,7 @@ impl CrawlReport {
             },
             nodes: fbas,
             latest_block: CrawlReport::determine_network_block_height(crawler),
+            minimum_fee: CrawlReport::determine_minimum_fee(crawler),
         }
     }
 }
@@ -211,6 +230,7 @@ impl MobcoinNode {
             geo_data: GeoData { country_name },
             latest_block: crawled_node.latest_block,
             ledger_version: crawled_node.network_block_version,
+            minimum_fee: crawled_node.minimum_fee,
         }
     }
 }

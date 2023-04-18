@@ -62,17 +62,23 @@ impl Crawler {
                     QuorumSet::empty()
                 };
 
-            let (network_block_version, latest_block) =
+            let (network_block_version, latest_block, fee) =
                 if let Some(rpc_reply) = Self::send_rpc_get_last_block_info(blockchain_client) {
-                    let network_block_version = rpc_reply.get_network_block_version();
-                    let index = rpc_reply.get_index();
-                    (network_block_version, index)
+                    (
+                        rpc_reply.get_network_block_version(),
+                        rpc_reply.get_index(),
+                        if let Some(fee) = rpc_reply.get_minimum_fees().get(&0) {
+                            *fee
+                        } else {
+                            0
+                        },
+                    )
                 } else {
                     warn!(
                         "Couldn't get network block version and latest block from {}.",
                         peer
                     );
-                    (0, 0)
+                    (0, 0, 0)
                 };
             let mut crawled = CrawledNode::new(
                 peer.clone(),
@@ -80,6 +86,7 @@ impl Crawler {
                 quorum_set,
                 latest_block,
                 network_block_version,
+                fee,
             );
             self.handle_discovered_node(peer, &mut crawled);
         } else {

@@ -334,6 +334,7 @@ mod tests {
             online: false,
             latest_ledger: 4242,
             network_block_version: 42,
+            minimum_fee: 424242,
         };
         let quorum_set = QuorumSet::from_mc_quorum_set(crawled_node.quorum_set.clone());
         let expected = MobcoinNode {
@@ -348,6 +349,7 @@ mod tests {
             },
             latest_ledger: 4242,
             ledger_version: 42,
+            minimum_fee: 424242,
         };
         let actual = MobcoinNode::from_crawled_node(crawled_node);
         assert_eq!(expected, actual);
@@ -371,6 +373,7 @@ mod tests {
                 online: false,
                 latest_ledger: i,
                 network_block_version: 42,
+                minimum_fee: 4242424242,
             };
             cnl.insert(crawled_node);
         }
@@ -385,7 +388,7 @@ mod tests {
         };
         let result = CrawlReport::determine_network_block_height(&crawler);
         assert!(
-            matches!(result, LatestBlockInfo::Err(_)),
+            matches!(result, -1),
             "result is type of {:#?} because of {:#?}.",
             result,
             cnl
@@ -406,6 +409,7 @@ mod tests {
                 online: false,
                 latest_ledger: i,
                 network_block_version: 42,
+                minimum_fee: 424242,
             };
             cnl.insert(crawled_node);
         }
@@ -420,7 +424,7 @@ mod tests {
         };
         let result = CrawlReport::determine_network_block_height(&crawler);
         assert!(
-            matches!(result, LatestBlockInfo::Consensus(_)),
+            result > 0,
             "result is type of {:#?} because of {:#?}.",
             result,
             cnl

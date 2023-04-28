@@ -142,6 +142,7 @@ mod tests {
             McQuorumSet::empty(),
             4242,
             42,
+            424242,
         );
         crawler.handle_discovered_node(&crawled_node_uri, &mut crawled_node);
         assert!(crawler.mobcoin_nodes.contains(&crawled_node));
@@ -171,6 +172,7 @@ mod tests {
                 online: false,
                 latest_ledger: 4242,
                 network_block_version: 42,
+                minimum_fee: 424242,
             },
             CrawledNode {
                 public_key: node_0_pk,
@@ -186,6 +188,7 @@ mod tests {
                 online: false,
                 latest_ledger: 4242,
                 network_block_version: 42,
+                minimum_fee: 424242,
             },
         ]);
         let actual = crawler.get_public_keys_from_quorum_sets();
@@ -204,6 +207,7 @@ mod tests {
                 ),
                 latest_ledger: 4242,
                 network_block_version: 42,
+                minimum_fee: 424242,
             },
             CrawledNode {
                 public_key: Ed25519Public::default(),
@@ -219,6 +223,7 @@ mod tests {
                 ),
                 latest_ledger: 4242,
                 network_block_version: 42,
+                minimum_fee: 424242,
             },
         ]);
         assert_eq!(actual.len(), expected.len());

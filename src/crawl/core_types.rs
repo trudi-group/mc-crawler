@@ -15,7 +15,7 @@ pub struct CrawledNode {
     pub(crate) port: u16,
     pub(crate) quorum_set: McQuorumSet,
     pub(crate) online: bool,
-    pub latest_block: u64,
+    pub latest_ledger: u64,
     pub(crate) network_block_version: u32,
     pub minimum_fee: u64,
 }
@@ -45,7 +45,7 @@ impl CrawledNode {
         url: String,
         online: bool,
         quorum_set: McQuorumSet,
-        latest_block: u64,
+        latest_ledger: u64,
         network_block_version: u32,
         minimum_fee: u64,
     ) -> Self {
@@ -56,7 +56,7 @@ impl CrawledNode {
             port,
             quorum_set,
             online,
-            latest_block,
+            latest_ledger,
             network_block_version,
             minimum_fee,
         }

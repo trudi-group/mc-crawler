@@ -62,7 +62,7 @@ impl Crawler {
                     QuorumSet::empty()
                 };
 
-            let (network_block_version, latest_block, fee) =
+            let (network_block_version, latest_ledger, fee) =
                 if let Some(rpc_reply) = Self::send_rpc_get_last_block_info(blockchain_client) {
                     (
                         rpc_reply.get_network_block_version(),
@@ -84,7 +84,7 @@ impl Crawler {
                 peer.clone(),
                 reachable,
                 quorum_set,
-                latest_block,
+                latest_ledger,
                 network_block_version,
                 fee,
             );

@@ -24,7 +24,7 @@ pub struct MobcoinNode {
     #[serde(skip_serializing_if = "String::is_empty")]
     pub isp: String,
     pub geo_data: GeoData,
-    pub latest_block: u64,
+    pub latest_ledger: u64,
     pub ledger_version: u32,
     pub minimum_fee: u64,
 }
@@ -63,17 +63,8 @@ pub struct CrawlReport {
     /// The MobileCoin Nodes
     pub node_info: NodeInfo,
     pub nodes: MobcoinFbas,
-    pub latest_block: LatestBlockInfo,
+    pub latest_ledger: i128,
     pub minimum_fee: u64,
-}
-
-#[derive(Clone, Debug, PartialEq, Eq, Default, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub enum LatestBlockInfo {
-    #[default]
-    None,
-    Consensus(u64),
-    Err(String),
 }
 
 /// Holds (general) data about the crawl and is included in the CrawlReport.
@@ -113,19 +104,19 @@ impl CrawlReport {
         min_fee.unwrap_or(0)
     }
 
-    fn determine_network_block_height(crawler: &Crawler) -> LatestBlockInfo {
+    fn determine_network_block_height(crawler: &Crawler) -> i128 {
         // reverse search in a hash map (value -> key)
         fn find_key_for_value(map: &HashMap<u64, u64>, value: u64) -> Option<u64> {
             map.iter()
                 .find_map(|(key, val)| if *val == value { Some(*key) } else { None })
         }
-        // Map<latest_block, count_of_nodes which_proclaim_it>
+        // Map<latest_ledger, count_of_nodes which_proclaim_it>
         let mut map = HashMap::<u64, u64>::new();
         for node in &crawler.mobcoin_nodes {
-            *map.entry(node.latest_block).or_insert(0) += 1;
+            *map.entry(node.latest_ledger).or_insert(0) += 1;
         }
         if map.is_empty() {
-            return LatestBlockInfo::Err("no nodes found.".to_string());
+            return 0;
         }
 
         let mut amount: Vec<u64> = map.values().cloned().collect::<Vec<u64>>();
@@ -149,14 +140,12 @@ impl CrawlReport {
                         // Bäääm!
                         match trusted_block {
                             Some(trusted_block) => {
-                                if trusted_block != node.latest_block {
-                                    return LatestBlockInfo::Err(
-                                        "nodes did not consent to a latest block because trusted nodes are discordant.".to_string(),
-                                    );
+                                if trusted_block != node.latest_ledger {
+                                    return -1; // nodes did not consent to a latest block because trusted nodes are discordant.
                                 }
                             }
                             _ => {
-                                trusted_block = Some(node.latest_block);
+                                trusted_block = Some(node.latest_ledger);
                             }
                         };
                     }
@@ -164,16 +153,14 @@ impl CrawlReport {
             }
             match trusted_block {
                 Some(trusted_block) => {
-                    return LatestBlockInfo::Consensus(trusted_block);
+                    return i128::from(trusted_block);
                 }
                 _ => {
-                    return LatestBlockInfo::Err(
-                        "nodes did not consent to a latest block because a unexpected error occured.".to_string(),
-                    );
+                    return -2; // nodes did not consent to a latest block because a unexpected error occured.
                 }
             };
         }
-        LatestBlockInfo::Consensus(find_key_for_value(&map, amount[0]).unwrap())
+        i128::from(find_key_for_value(&map, amount[0]).unwrap())
     }
     pub fn create_crawl_report(fbas: MobcoinFbas, crawler: &Crawler) -> Self {
         Self {
@@ -184,7 +171,7 @@ impl CrawlReport {
                 reachable_nodes: crawler.reachable_nodes,
             },
             nodes: fbas,
-            latest_block: CrawlReport::determine_network_block_height(crawler),
+            latest_ledger: CrawlReport::determine_network_block_height(crawler),
             minimum_fee: CrawlReport::determine_minimum_fee(crawler),
         }
     }
@@ -228,7 +215,7 @@ impl MobcoinNode {
             quorum_set,
             isp,
             geo_data: GeoData { country_name },
-            latest_block: crawled_node.latest_block,
+            latest_ledger: crawled_node.latest_ledger,
             ledger_version: crawled_node.network_block_version,
             minimum_fee: crawled_node.minimum_fee,
         }
@@ -345,7 +332,7 @@ mod tests {
                 ],
             ),
             online: false,
-            latest_block: 4242,
+            latest_ledger: 4242,
             network_block_version: 42,
         };
         let quorum_set = QuorumSet::from_mc_quorum_set(crawled_node.quorum_set.clone());
@@ -359,7 +346,7 @@ mod tests {
             geo_data: GeoData {
                 country_name: String::from("United States"),
             },
-            latest_block: 4242,
+            latest_ledger: 4242,
             ledger_version: 42,
         };
         let actual = MobcoinNode::from_crawled_node(crawled_node);
@@ -382,7 +369,7 @@ mod tests {
                 port: 123,
                 quorum_set: McQuorumSet::new(0, vec![]),
                 online: false,
-                latest_block: i,
+                latest_ledger: i,
                 network_block_version: 42,
             };
             cnl.insert(crawled_node);
@@ -417,7 +404,7 @@ mod tests {
                 port: 123,
                 quorum_set: McQuorumSet::new(0, vec![]),
                 online: false,
-                latest_block: i,
+                latest_ledger: i,
                 network_block_version: 42,
             };
             cnl.insert(crawled_node);

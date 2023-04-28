@@ -169,7 +169,7 @@ mod tests {
                     ],
                 ),
                 online: false,
-                latest_block: 4242,
+                latest_ledger: 4242,
                 network_block_version: 42,
             },
             CrawledNode {
@@ -184,7 +184,7 @@ mod tests {
                     ],
                 ),
                 online: false,
-                latest_block: 4242,
+                latest_ledger: 4242,
                 network_block_version: 42,
             },
         ]);
@@ -202,7 +202,7 @@ mod tests {
                         QuorumSetMember::Node(node_1_id.clone()),
                     ],
                 ),
-                latest_block: 4242,
+                latest_ledger: 4242,
                 network_block_version: 42,
             },
             CrawledNode {
@@ -217,7 +217,7 @@ mod tests {
                         QuorumSetMember::Node(node_1_id.clone()),
                     ],
                 ),
-                latest_block: 4242,
+                latest_ledger: 4242,
                 network_block_version: 42,
             },
         ]);

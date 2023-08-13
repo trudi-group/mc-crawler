@@ -1,11 +1,0 @@
---2023-01-30 19:40:37--  https://www.google.com/chrome/thank-you.html?statcb=0
-Auflösen des Hostnamens www.google.com (www.google.com) … 142.251.36.228, 2a00:1450:4016:80a::2004
-Verbindungsaufbau zu www.google.com (www.google.com)|142.251.36.228|:443 … verbunden.
-HTTP-Anforderung gesendet, auf Antwort wird gewartet … 200 OK
-Länge: 275297 (269K) [text/html]
-Wird in ‘thank-you.html?statcb=0’ gespeichert.
-
-thank-you.html?statcb=0                            0%[                                                                                                        ]       0  --.-KB/s               thank-you.html?statcb=0                          100%[=======================================================================================================>] 268,84K  1,49MB/s    in 0,2s    
-
-2023-01-30 19:40:38 (1,49 MB/s) - ‘thank-you.html?statcb=0’ gespeichert [275297/275297]
-

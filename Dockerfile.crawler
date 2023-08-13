@@ -1,0 +1,37 @@
+# Dockerfile to build the executable binary.
+# The executable is placed in /mc-crawler.
+# The config is copied from the builder stage (and thus verbose from the sources).
+
+# Get some small base image to run things on.
+FROM debian:bullseye-slim AS runtime
+
+# Create a user to drop into.
+RUN groupadd -g 1000 mccrawler \
+    && useradd --no-log-init -u 1000 -g mccrawler mccrawler -s /bin/bash \
+    && mkdir -p mc-crawler
+
+# Install OS dependencies.
+RUN apt-get update && apt-get install -y \
+    libssl-dev \
+    build-essential #libc
+
+# cd to working dir
+WORKDIR mc-crawler
+
+# Copy compiled binaries from builder
+COPY --from=mc-crawler-builder /mc-crawler/target/release/mc-crawler .
+# Copy required file with bootstrap peers from builder
+COPY --from=mc-crawler-builder /mc-crawler/bootstrap.txt .
+
+# Set ownership.
+RUN chown -R mccrawler:mccrawler ./mc-crawler
+
+# Set SGX environment variables needed by mobilecoin libraries
+ENV IAS_MODE=DEV \
+    SGX_MODE=SW
+
+# Drop root.
+USER mccrawler
+
+# Run the binary.
+ENTRYPOINT ["./mc-crawler","--output","crawl_data", "-c"]

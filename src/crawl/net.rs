@@ -78,7 +78,7 @@ impl Crawler {
                         "Couldn't get network block version and latest block from {}.",
                         peer
                     );
-                    (0, 0, 0)
+                    (0, 0, 0) // network_block_version, latest_ledger, minimum_fee
                 };
             let mut crawled = CrawledNode::new(
                 peer.clone(),
@@ -102,7 +102,7 @@ impl Crawler {
         let response = match client.get_latest_msg(&empty::Empty::default()) {
             Ok(reply) => Some(reply),
             Err(_) => {
-                warn!("Error in RPC response.");
+                warn!("Error in ConsensusPeerApi-RPC response.");
                 None
             }
         };
@@ -112,7 +112,7 @@ impl Crawler {
         let response = match client.get_last_block_info(&empty::Empty::default()) {
             Ok(reply) => Some(reply),
             Err(_) => {
-                warn!("Error in RPC response.");
+                warn!("Error in BlockchainApi-RPC response.");
                 None
             }
         };

@@ -15,9 +15,9 @@ pub struct CrawledNode {
     pub(crate) port: u16,
     pub(crate) quorum_set: McQuorumSet,
     pub(crate) online: bool,
-    pub latest_ledger: u64,
+    pub(crate) latest_ledger: u64,
     pub(crate) network_block_version: u32,
-    pub minimum_fee: u64,
+    pub(crate) minimum_fee: u64,
 }
 
 /// The Crawler object steers a crawl.
@@ -26,7 +26,7 @@ pub struct Crawler {
     /// initial set of bootstrap peers
     pub bootstrap_peers: HashSet<String>,
     /// A HashSet of discovered nodes
-    pub mobcoin_nodes: HashSet<CrawledNode>,
+    pub(crate) mobcoin_nodes: HashSet<CrawledNode>,
     /// A HashSet of nodes to be crawled
     pub(crate) to_crawl: HashSet<String>,
     /// A HashSet of nodes that have been crawled

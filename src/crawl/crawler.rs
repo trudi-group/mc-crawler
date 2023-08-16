@@ -31,8 +31,8 @@ impl Crawler {
         };
         let ch = ChannelBuilder::default_channel_builder(env)
             .connect_to_uri(&node_uri.unwrap(), &logger);
-        let consensus_client = ConsensusPeerApiClient::new(ch.clone()); // consensus_peer.ConsensusPeerAPI.GetLatestMsg
-        let blockchain_client = <BlockchainApiClient>::new(ch); // consensus_common.BlockchainAPI.GetLastBlockInfo
+        let consensus_client = ConsensusPeerApiClient::new(ch.clone());
+        let blockchain_client = <BlockchainApiClient>::new(ch);
         (Some(consensus_client), Some(blockchain_client))
     }
 
@@ -111,17 +111,17 @@ mod tests {
     #[test]
     fn invalid_peer_address_to_cons_peer() {
         let peer = "localhost:443";
-        let (rpc1, rpc2) = Crawler::prepare_rpc(String::from(peer));
-        assert!(rpc1.is_none());
-        assert!(rpc2.is_none());
+        let (consenus_client, blockchain_client) = Crawler::prepare_rpc(String::from(peer));
+        assert!(consenus_client.is_none());
+        assert!(blockchain_client.is_none());
     }
 
     #[test]
     fn correct_peer_address_to_cons_peer() {
         let peer = "mc://localhost:443";
-        let (rpc1, rpc2) = Crawler::prepare_rpc(String::from(peer));
-        assert!(rpc1.is_some());
-        assert!(rpc2.is_some());
+        let (consenus_client, blockchain_client) = Crawler::prepare_rpc(String::from(peer));
+        assert!(consenus_client.is_some());
+        assert!(blockchain_client.is_some());
     }
 
     #[test]
@@ -140,9 +140,9 @@ mod tests {
             crawled_node_uri.clone(),
             reachable,
             McQuorumSet::empty(),
-            4242,
-            42,
-            424242,
+            4242,   // some random latest_ledger value (a.k.a. block height)
+            42,     // a random network block version for testing purposes
+            424242, // a random minimum fee in pMOB
         );
         crawler.handle_discovered_node(&crawled_node_uri, &mut crawled_node);
         assert!(crawler.mobcoin_nodes.contains(&crawled_node));

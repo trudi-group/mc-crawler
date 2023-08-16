@@ -6,8 +6,6 @@ use mc_consensus_scp::{QuorumSet as McQuorumSet, QuorumSetMember};
 use mc_crypto_keys::Ed25519Public;
 use serde::{Serialize, Serializer};
 use std::collections::HashMap;
-#[allow(unused_imports)] // necessary for tests
-use std::collections::HashSet;
 use std::time::Duration;
 
 #[derive(Clone, Debug, PartialEq, Eq, Default, Serialize)]
@@ -104,12 +102,24 @@ impl CrawlReport {
         min_fee.unwrap_or(0)
     }
 
+    /// determines the block height in the network
+    ///
+    /// This function tries to determine the general block height as follows:
+    /// In the first step, the function counts all statements of the nodes about
+    /// the block height and sorts them by frequency.
+    ///
+    /// If two different block heights are propagated by the same number of nodes,
+    /// it is determined whether the bootstrapping nodes, which are trusted a priori,
+    /// collectively support one of the statements.
+    /// If this is the case, a decision is made in favor of this block height and we are done.
+    ///
+    /// If there is a clear majority in favor of a block height,
+    /// then that block height is chosen.
+    ///
+    /// If it is not possible to make a decision
+    /// either by means of the trusted nodes or by a majority decision,
+    /// an error code smaller than 0 is generated.
     fn determine_network_block_height(crawler: &Crawler) -> i128 {
-        // reverse search in a hash map (value -> key)
-        fn find_key_for_value(map: &HashMap<u64, u64>, value: u64) -> Option<u64> {
-            map.iter()
-                .find_map(|(key, val)| if *val == value { Some(*key) } else { None })
-        }
         // Map<latest_ledger, count_of_nodes which_proclaim_it>
         let mut map = HashMap::<u64, u64>::new();
         for node in &crawler.mobcoin_nodes {
@@ -122,29 +132,22 @@ impl CrawlReport {
         let mut amount: Vec<u64> = map.values().cloned().collect::<Vec<u64>>();
         amount.sort_unstable_by(|a, b| b.cmp(a)); // reverse sorting
 
-        // 2 different block lengths have the same number of »supporter nodes«
+        // 2 different block lengths have the same number of "supporter nodes"
         // actually no decision possible; let's rely on our trusted bootstrap nodes
         if amount.len() > 1 && amount[0] == amount[1] {
-            let bootstrap_peers = crawler
-                .clone()
-                .bootstrap_peers
-                .into_iter()
-                .collect::<Vec<String>>();
-
             let mut trusted_block = None;
             for node in &crawler.mobcoin_nodes {
-                for bsp in &bootstrap_peers {
+                for bsp in &crawler.bootstrap_peers {
                     let (domain, port) = CrawledNode::fragment_mc_url(bsp.clone());
                     // is this node one of our trusted ones?
                     if (node.domain == domain) && (node.port == port) {
-                        // Bäääm!
                         match trusted_block {
                             Some(trusted_block) => {
                                 if trusted_block != node.latest_ledger {
                                     return -1; // nodes did not consent to a latest block because trusted nodes are discordant.
                                 }
                             }
-                            _ => {
+                            None => {
                                 trusted_block = Some(node.latest_ledger);
                             }
                         };
@@ -160,7 +163,12 @@ impl CrawlReport {
                 }
             };
         }
-        i128::from(find_key_for_value(&map, amount[0]).unwrap())
+        // find the most common latest_ledger (aka block height)
+        i128::from(
+            map.iter()
+                .find_map(|(key, val)| if *val == amount[0] { Some(*key) } else { None })
+                .unwrap(),
+        )
     }
     pub fn create_crawl_report(fbas: MobcoinFbas, crawler: &Crawler) -> Self {
         Self {
@@ -235,6 +243,7 @@ where
 mod tests {
     use super::*;
     use mc_consensus_scp::test_utils::test_node_id;
+    use std::collections::HashSet;
 
     #[test]
     fn mc_qset_without_inner_to_sbeat_qset() {
@@ -387,18 +396,11 @@ mod tests {
             crawl_time: String::default(),
         };
         let result = CrawlReport::determine_network_block_height(&crawler);
-        assert!(
-            matches!(result, -1),
-            "result is type of {:#?} because of {:#?}.",
-            result,
-            cnl
-        );
+        assert_eq!(result, -1);
     }
     #[test]
-    fn test_determine_network_block_height() {
-        let to_crawl: HashSet<String> = vec!["mc://node1.coins.com:123".to_string()]
-            .into_iter()
-            .collect();
+    fn determine_network_block_height() {
+        let to_crawl = HashSet::from(["mc://node1.coins.com:123".to_string()]);
         let mut cnl = HashSet::<CrawledNode>::new();
         for i in 1..4 {
             let crawled_node = CrawledNode {
@@ -423,6 +425,7 @@ mod tests {
             crawl_time: String::default(),
         };
         let result = CrawlReport::determine_network_block_height(&crawler);
+        assert_eq!(result, 1);
         assert!(
             result > 0,
             "result is type of {:#?} because of {:#?}.",

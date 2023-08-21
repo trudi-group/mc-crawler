@@ -61,8 +61,8 @@ pub struct CrawlReport {
     /// The MobileCoin Nodes
     pub node_info: NodeInfo,
     pub nodes: MobcoinFbas,
-    pub latest_ledger: i128,
-    pub minimum_fee: u64,
+    pub networks_latest_ledger: i128,
+    pub networks_minimum_fee: u64,
 }
 
 /// Holds (general) data about the crawl and is included in the CrawlReport.
@@ -86,20 +86,17 @@ impl MobcoinFbas {
 
 impl CrawlReport {
     fn determine_minimum_fee(crawler: &Crawler) -> u64 {
-        let mut min_fee = None;
-        for node in &crawler.mobcoin_nodes {
-            match min_fee {
-                None => {
-                    min_fee = Some(node.minimum_fee);
-                }
-                Some(mf) => {
-                    if mf != node.minimum_fee {
-                        return 0;
-                    }
-                }
-            }
+        let minimum_fees: Vec<u64> = crawler
+            .mobcoin_nodes
+            .iter()
+            .map(|node| node.minimum_fee)
+            .collect();
+
+        if minimum_fees.iter().all(|&item| item == minimum_fees[0]) && !minimum_fees.is_empty() {
+            minimum_fees[0]
+        } else {
+            0
         }
-        min_fee.unwrap_or(0)
     }
 
     /// determines the block height in the network
@@ -179,8 +176,8 @@ impl CrawlReport {
                 reachable_nodes: crawler.reachable_nodes,
             },
             nodes: fbas,
-            latest_ledger: CrawlReport::determine_network_block_height(crawler),
-            minimum_fee: CrawlReport::determine_minimum_fee(crawler),
+            networks_latest_ledger: CrawlReport::determine_network_block_height(crawler),
+            networks_minimum_fee: CrawlReport::determine_minimum_fee(crawler),
         }
     }
 }

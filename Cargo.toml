@@ -57,4 +57,4 @@ lmdb-rkv = { git = "https://github.com/mozilla/lmdb-rs", rev = "df1c2f5" }
 
 [dev-dependencies]
 assert_cmd = "2.0"
-predicates = "2.1.5"
+predicates = "3.0.4"

@@ -24,7 +24,7 @@ jobs:
         run: |
           sudo apt install -y protobuf-compiler
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: ⚡ Cargo Cache
         uses: actions/cache@v3
         with:
@@ -34,7 +34,7 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: 🔬 Run cargo-tarpaulin
         uses: actions-rs/tarpaulin@v0.1

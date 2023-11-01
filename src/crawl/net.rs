@@ -84,9 +84,9 @@ impl Crawler {
                 peer.clone(),
                 reachable,
                 quorum_set,
-                latest_ledger,
-                network_block_version,
-                fee,
+                latest_ledger.try_into().unwrap(),
+                network_block_version.try_into().unwrap(),
+                fee.try_into().unwrap(),
             );
             self.handle_discovered_node(peer, &mut crawled);
         } else {

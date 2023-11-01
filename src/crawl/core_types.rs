@@ -15,9 +15,9 @@ pub struct CrawledNode {
     pub(crate) port: u16,
     pub(crate) quorum_set: McQuorumSet,
     pub(crate) online: bool,
-    pub(crate) latest_ledger: u64,
-    pub(crate) network_block_version: u32,
-    pub(crate) minimum_fee: u64,
+    pub(crate) latest_ledger: usize,
+    pub(crate) network_block_version: usize,
+    pub(crate) minimum_fee: usize,
 }
 
 /// The Crawler object steers a crawl.
@@ -45,9 +45,9 @@ impl CrawledNode {
         url: String,
         online: bool,
         quorum_set: McQuorumSet,
-        latest_ledger: u64,
-        network_block_version: u32,
-        minimum_fee: u64,
+        latest_ledger: usize,
+        network_block_version: usize,
+        minimum_fee: usize,
     ) -> Self {
         let (domain, port) = Self::fragment_mc_url(url);
         CrawledNode {
@@ -63,7 +63,7 @@ impl CrawledNode {
     }
 
     /// Return 0.0.0.0 as an address if not resolvable otherwise the stats functions would return one own's geolocation
-    pub fn fragment_mc_url(url: String) -> (String, u16) {
+    pub (crate) fn fragment_mc_url(url: String) -> (String, u16) {
         let url = Url::parse(&url).expect("Failed to parse into Url");
         let domain = url.domain();
         let port = url.port();

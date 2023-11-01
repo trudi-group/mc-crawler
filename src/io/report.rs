@@ -22,9 +22,9 @@ pub struct MobcoinNode {
     #[serde(skip_serializing_if = "String::is_empty")]
     pub isp: String,
     pub geo_data: GeoData,
-    pub latest_ledger: u64,
-    pub ledger_version: u32,
-    pub minimum_fee: u64,
+    pub latest_ledger: usize,
+    pub ledger_version: usize,
+    pub minimum_fee: usize,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Default, Serialize)]
@@ -61,8 +61,8 @@ pub struct CrawlReport {
     /// The MobileCoin Nodes
     pub node_info: NodeInfo,
     pub nodes: MobcoinFbas,
-    pub networks_latest_ledger: i128,
-    pub networks_minimum_fee: u64,
+    pub networks_latest_ledger: usize,
+    pub networks_minimum_fee: usize,
 }
 
 /// Holds (general) data about the crawl and is included in the CrawlReport.
@@ -85,8 +85,8 @@ impl MobcoinFbas {
 }
 
 impl CrawlReport {
-    fn determine_minimum_fee(crawler: &Crawler) -> u64 {
-        let minimum_fees: Vec<u64> = crawler
+    fn determine_minimum_fee(crawler: &Crawler) -> usize {
+        let minimum_fees: Vec<usize> = crawler
             .mobcoin_nodes
             .iter()
             .map(|node| node.minimum_fee)
@@ -116,9 +116,9 @@ impl CrawlReport {
     /// If it is not possible to make a decision
     /// either by means of the trusted nodes or by a majority decision,
     /// an error code smaller than 0 is generated.
-    fn determine_network_block_height(crawler: &Crawler) -> i128 {
+    fn determine_network_block_height(crawler: &Crawler) -> usize {
         // Map<latest_ledger, count_of_nodes which_proclaim_it>
-        let mut map = HashMap::<u64, u64>::new();
+        let mut map = HashMap::<usize, u64>::new();
         for node in &crawler.mobcoin_nodes {
             *map.entry(node.latest_ledger).or_insert(0) += 1;
         }
@@ -141,7 +141,7 @@ impl CrawlReport {
                         match trusted_block {
                             Some(trusted_block) => {
                                 if trusted_block != node.latest_ledger {
-                                    return -1; // nodes did not consent to a latest block because trusted nodes are discordant.
+                                    return 0; // nodes did not consent to a latest block because trusted nodes are discordant.
                                 }
                             }
                             None => {
@@ -153,15 +153,15 @@ impl CrawlReport {
             }
             match trusted_block {
                 Some(trusted_block) => {
-                    return i128::from(trusted_block);
+                    return usize::from(trusted_block);
                 }
                 _ => {
-                    return -2; // nodes did not consent to a latest block because a unexpected error occured.
+                    return  0; // nodes did not consent to a latest block because a unexpected error occured.
                 }
             };
         }
         // find the most common latest_ledger (aka block height)
-        i128::from(
+        usize::from(
             map.iter()
                 .find_map(|(key, val)| if *val == amount[0] { Some(*key) } else { None })
                 .unwrap(),

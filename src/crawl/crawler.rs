@@ -5,7 +5,8 @@ use std::{collections::HashSet, str::FromStr, sync::Arc};
 use grpcio::{ChannelBuilder, EnvBuilder};
 use mc_common::logger;
 use mc_consensus_api::{
-    consensus_peer::GetLatestMsgResponse, consensus_peer_grpc::ConsensusPeerApiClient,
+    consensus_common_grpc::BlockchainApiClient, consensus_peer::GetLatestMsgResponse,
+    consensus_peer_grpc::ConsensusPeerApiClient,
 };
 use mc_consensus_scp::QuorumSet as McQuorumSet;
 use mc_crypto_keys::Ed25519Public;
@@ -16,20 +17,23 @@ use mc_util_uri::ConsensusClientUri as ClientUri;
 
 impl Crawler {
     /// Opens an RPC channel to the peer which can be used for communication later
-    pub(crate) fn prepare_rpc(peer: String) -> Option<ConsensusPeerApiClient> {
+    pub(crate) fn prepare_rpc(
+        peer: String,
+    ) -> (Option<ConsensusPeerApiClient>, Option<BlockchainApiClient>) {
         let env = Arc::new(EnvBuilder::new().build());
         let logger = logger::create_root_logger();
         let node_uri = match ClientUri::from_str(&peer) {
             Ok(uri) => Some(uri),
             Err(_) => {
                 warn!("Error in Node URI: {}", peer);
-                return None;
+                return (None, None);
             }
         };
         let ch = ChannelBuilder::default_channel_builder(env)
             .connect_to_uri(&node_uri.unwrap(), &logger);
-        let consensus_client = ConsensusPeerApiClient::new(ch);
-        Some(consensus_client)
+        let consensus_client = ConsensusPeerApiClient::new(ch.clone());
+        let blockchain_client = <BlockchainApiClient>::new(ch);
+        (Some(consensus_client), Some(blockchain_client))
     }
 
     /// The bytes of the RPC response is deserialised into an McQuorumSet::QuorumSet
@@ -107,15 +111,17 @@ mod tests {
     #[test]
     fn invalid_peer_address_to_cons_peer() {
         let peer = "localhost:443";
-        let actual = Crawler::prepare_rpc(String::from(peer));
-        assert!(actual.is_none());
+        let (consenus_client, blockchain_client) = Crawler::prepare_rpc(String::from(peer));
+        assert!(consenus_client.is_none());
+        assert!(blockchain_client.is_none());
     }
 
     #[test]
     fn correct_peer_address_to_cons_peer() {
         let peer = "mc://localhost:443";
-        let actual = Crawler::prepare_rpc(String::from(peer));
-        assert!(actual.is_some());
+        let (consenus_client, blockchain_client) = Crawler::prepare_rpc(String::from(peer));
+        assert!(consenus_client.is_some());
+        assert!(blockchain_client.is_some());
     }
 
     #[test]
@@ -130,8 +136,14 @@ mod tests {
         let mut crawler = Crawler::default();
         let reachable = false;
         let crawled_node_uri = String::from("mc://test.node:11");
-        let mut crawled_node =
-            CrawledNode::new(crawled_node_uri.clone(), reachable, McQuorumSet::empty());
+        let mut crawled_node = CrawledNode::new(
+            crawled_node_uri.clone(),
+            reachable,
+            McQuorumSet::empty(),
+            4242,   // some random latest_ledger value (a.k.a. block height)
+            42,     // a random network block version for testing purposes
+            424242, // a random minimum fee in pMOB
+        );
         crawler.handle_discovered_node(&crawled_node_uri, &mut crawled_node);
         assert!(crawler.mobcoin_nodes.contains(&crawled_node));
         assert!(crawler.crawled.contains(&crawled_node_uri));
@@ -158,6 +170,9 @@ mod tests {
                     ],
                 ),
                 online: false,
+                latest_ledger: 4242,
+                network_block_version: 42,
+                minimum_fee: 424242,
             },
             CrawledNode {
                 public_key: node_0_pk,
@@ -171,6 +186,9 @@ mod tests {
                     ],
                 ),
                 online: false,
+                latest_ledger: 4242,
+                network_block_version: 42,
+                minimum_fee: 424242,
             },
         ]);
         let actual = crawler.get_public_keys_from_quorum_sets();
@@ -187,6 +205,9 @@ mod tests {
                         QuorumSetMember::Node(node_1_id.clone()),
                     ],
                 ),
+                latest_ledger: 4242,
+                network_block_version: 42,
+                minimum_fee: 424242,
             },
             CrawledNode {
                 public_key: Ed25519Public::default(),
@@ -200,6 +221,9 @@ mod tests {
                         QuorumSetMember::Node(node_1_id.clone()),
                     ],
                 ),
+                latest_ledger: 4242,
+                network_block_version: 42,
+                minimum_fee: 424242,
             },
         ]);
         assert_eq!(actual.len(), expected.len());

@@ -9,17 +9,22 @@ use mc_crypto_keys::Ed25519Public;
 /// A CrawledNode is a MobileCoin network node that we have learned of during the crawl. The
 /// Crawler keeps a tally of these during a crawl and each will later be transformed to a MobCoinNode.
 #[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]
-pub(crate) struct CrawledNode {
+pub struct CrawledNode {
     pub(crate) public_key: Ed25519Public,
     pub(crate) domain: String,
     pub(crate) port: u16,
     pub(crate) quorum_set: McQuorumSet,
     pub(crate) online: bool,
+    pub(crate) latest_ledger: usize,
+    pub(crate) network_block_version: usize,
+    pub(crate) minimum_fee: usize,
 }
 
 /// The Crawler object steers a crawl.
 #[derive(Clone, Debug, PartialEq, Eq, Default)]
 pub struct Crawler {
+    /// initial set of bootstrap peers
+    pub bootstrap_peers: HashSet<String>,
     /// A HashSet of discovered nodes
     pub(crate) mobcoin_nodes: HashSet<CrawledNode>,
     /// A HashSet of nodes to be crawled
@@ -36,7 +41,14 @@ pub struct Crawler {
 
 impl CrawledNode {
     /// Create a new CrawledNode using its hostname, connectivity status and Qset.
-    pub(crate) fn new(url: String, online: bool, quorum_set: McQuorumSet) -> Self {
+    pub(crate) fn new(
+        url: String,
+        online: bool,
+        quorum_set: McQuorumSet,
+        latest_ledger: usize,
+        network_block_version: usize,
+        minimum_fee: usize,
+    ) -> Self {
         let (domain, port) = Self::fragment_mc_url(url);
         CrawledNode {
             public_key: Ed25519Public::default(),
@@ -44,11 +56,14 @@ impl CrawledNode {
             port,
             quorum_set,
             online,
+            latest_ledger,
+            network_block_version,
+            minimum_fee,
         }
     }
 
     /// Return 0.0.0.0 as an address if not resolvable otherwise the stats functions would return one own's geolocation
-    fn fragment_mc_url(url: String) -> (String, u16) {
+    pub (crate) fn fragment_mc_url(url: String) -> (String, u16) {
         let url = Url::parse(&url).expect("Failed to parse into Url");
         let domain = url.domain();
         let port = url.port();
@@ -87,6 +102,7 @@ impl Crawler {
             to_crawl.insert(peer);
         }
         Crawler {
+            bootstrap_peers: to_crawl.clone(),
             mobcoin_nodes: HashSet::new(),
             to_crawl,
             crawled: HashSet::new(),
@@ -116,6 +132,7 @@ mod tests {
         to_crawl.insert(String::from("foo"));
         to_crawl.insert(String::from("bar"));
         let expected = Crawler {
+            bootstrap_peers: bs_peers.clone().into_iter().collect::<HashSet<String>>(),
             mobcoin_nodes: HashSet::new(),
             to_crawl,
             crawled: HashSet::new(),

@@ -19,7 +19,7 @@ serde_json = "1.0"
 chrono = "0.4"
 base64 = "0.21"
 structopt = "0.3"
-maxminddb = "0.23"
+maxminddb = "0.24"
 mc-consensus-scp = {git = "https://github.com/mobilecoinfoundation/mobilecoin", tag = "v2.0.2"}
 mc-util-uri = {git = "https://github.com/mobilecoinfoundation/mobilecoin", tag = "v2.0.2"}
 mc-util-grpc = {git = "https://github.com/mobilecoinfoundation/mobilecoin", tag = "v2.0.2"}
